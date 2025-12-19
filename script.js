@@ -32,7 +32,7 @@ $(window).scroll(function () {
 
 // Countdown Timer
 function updateCountdown() {
-    const eventDate = new Date("2025-09-26T18:00:00Z"); // Event date in GMT+5 (Asia/Almaty)
+   const eventDate = new Date("2025-12-20T08:00:00Z"); // Завтра 13:00 GMT+5 (Алматы)
     const currentDate = new Date();
     const difference = eventDate - currentDate;
 
