@@ -93,6 +93,25 @@
   section.panel{display:none;}
   section.panel.active{display:block;}
 
+  body.quiz-focus header{background:rgba(11,13,16,0.96); border-bottom:1px solid transparent;}
+  body.quiz-focus .head-inner{padding:8px 12px 6px;}
+  body.quiz-focus .eyebrow,
+  body.quiz-focus .sub,
+  body.quiz-focus .spectrum,
+  body.quiz-focus .spectrum-caption,
+  body.quiz-focus nav.tabs button:not([data-tab="quiz"]){display:none;}
+  body.quiz-focus nav.tabs{margin-top:0; gap:6px;}
+  body.quiz-focus nav.tabs button[data-tab="quiz"]{flex:1; border-radius:999px; background:var(--panel); border-color:var(--border); color:var(--text);}
+  body.quiz-focus main{padding-top:6px;}
+  body.quiz-focus .wrap{padding-bottom:24px;}
+  body.quiz-focus .card{background:var(--panel-2); border-color:var(--border); box-shadow:none;}
+  body.quiz-focus .card#quizCard{background:var(--panel); padding:18px;}
+  body.quiz-focus .quiz-top{margin-bottom:10px; font-size:12px;}
+  body.quiz-focus .quiz-bar{height:4px; margin-bottom:12px;}
+  body.quiz-focus .q-text{font-size:17px; margin-bottom:14px;}
+  body.quiz-focus .opt{padding:12px 14px; background:transparent;}
+  body.quiz-focus .quiz-controls{margin-top:12px;}
+
   .card{
     background:var(--panel); border:1px solid var(--border); border-radius:12px;
     padding:20px; margin-bottom:16px;
@@ -698,6 +717,7 @@ document.querySelectorAll('nav.tabs button').forEach(btn=>{
     document.querySelectorAll('section.panel').forEach(p=>p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById(btn.dataset.tab).classList.add('active');
+    document.body.classList.toggle('quiz-focus', btn.dataset.tab === 'quiz');
   });
 });
 
