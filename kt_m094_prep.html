@@ -1,0 +1,1224 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>КТ M094 · Алгоритмы и структуры данных</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0b0d10;
+    --panel:#12161b;
+    --panel-2:#171c22;
+    --border:#242a32;
+    --text:#e8eaed;
+    --muted:#8a93a0;
+
+    --o1:#4fd1ae;
+    --olog:#4fb8d1;
+    --on:#5b8def;
+    --onlogn:#8b7fe8;
+    --on2:#e0a83e;
+    --on3:#e8823e;
+    --o2n:#e85f5f;
+    --onf:#c23b6b;
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'IBM Plex Sans', sans-serif;
+    -webkit-font-smoothing:antialiased;
+    min-height:100vh;
+  }
+  h1,h2,h3{font-family:'Space Grotesk', sans-serif; margin:0;}
+  code, .mono, .data{font-family:'JetBrains Mono', monospace;}
+
+  .wrap{max-width:960px; margin:0 auto; padding:0 20px 64px;}
+
+  /* ---- header ---- */
+  header{
+    position:sticky; top:0; z-index:20;
+    background:rgba(11,13,16,0.92);
+    backdrop-filter:blur(6px);
+    border-bottom:1px solid var(--border);
+  }
+  .head-inner{max-width:960px; margin:0 auto; padding:18px 20px 14px;}
+  .eyebrow{
+    font-family:'JetBrains Mono', monospace;
+    font-size:11px; letter-spacing:.12em; text-transform:uppercase;
+    color:var(--muted); margin-bottom:6px;
+  }
+  h1{font-size:22px; font-weight:700; letter-spacing:-.01em;}
+  .sub{color:var(--muted); font-size:13.5px; margin-top:4px;}
+
+  /* Big-O spectrum legend — signature element, reused everywhere */
+  .spectrum{
+    display:flex; margin-top:14px; border-radius:8px; overflow:hidden;
+    border:1px solid var(--border); height:30px;
+  }
+  .spectrum .seg{
+    flex:1; display:flex; align-items:center; justify-content:center;
+    font-family:'JetBrains Mono', monospace; font-size:10.5px; font-weight:600;
+    color:#0b0d10; letter-spacing:-.02em; cursor:default;
+  }
+  .seg[data-c="o1"]{background:var(--o1);}
+  .seg[data-c="olog"]{background:var(--olog);}
+  .seg[data-c="on"]{background:var(--on); color:#fff;}
+  .seg[data-c="onlogn"]{background:var(--onlogn); color:#fff;}
+  .seg[data-c="on2"]{background:var(--on2);}
+  .seg[data-c="on3"]{background:var(--on3);}
+  .seg[data-c="o2n"]{background:var(--o2n); color:#fff;}
+  .seg[data-c="onf"]{background:var(--onf); color:#fff;}
+  .spectrum-caption{
+    display:flex; justify-content:space-between; margin-top:5px;
+    font-size:10.5px; color:var(--muted); font-family:'JetBrains Mono',monospace;
+  }
+
+  /* tabs */
+  nav.tabs{display:flex; gap:4px; margin-top:16px;}
+  nav.tabs button{
+    flex:1; padding:10px 8px; border-radius:8px 8px 0 0;
+    background:transparent; border:1px solid transparent; border-bottom:none;
+    color:var(--muted); font-family:'Space Grotesk',sans-serif; font-weight:600;
+    font-size:13.5px; cursor:pointer;
+  }
+  nav.tabs button.active{
+    background:var(--panel); color:var(--text); border-color:var(--border);
+  }
+
+  main{padding-top:22px;}
+  section.panel{display:none;}
+  section.panel.active{display:block;}
+
+  .card{
+    background:var(--panel); border:1px solid var(--border); border-radius:12px;
+    padding:20px; margin-bottom:16px;
+  }
+  .card h2{font-size:16px; margin-bottom:12px;}
+  .card h3{font-size:13px; color:var(--muted); margin:18px 0 8px; text-transform:uppercase; letter-spacing:.06em; font-family:'JetBrains Mono',monospace; font-weight:600;}
+  .card h3:first-child{margin-top:0;}
+
+  table{width:100%; border-collapse:collapse; font-size:13px;}
+  th,td{text-align:left; padding:7px 10px; border-bottom:1px solid var(--border); vertical-align:top;}
+  th{color:var(--muted); font-weight:600; font-family:'JetBrains Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.04em;}
+  td.mono{font-family:'JetBrains Mono',monospace;}
+  tr:last-child td{border-bottom:none;}
+
+  .pill{
+    display:inline-block; padding:2px 8px; border-radius:5px;
+    font-family:'JetBrains Mono',monospace; font-size:11.5px; font-weight:700; color:#0b0d10;
+  }
+  .pill.on{color:#fff;} .pill.onlogn{color:#fff;} .pill.o2n{color:#fff;} .pill.onf{color:#fff;}
+
+  /* flashcards */
+  .flash-stage{display:flex; flex-direction:column; align-items:center; gap:16px;}
+  .flash-progress{color:var(--muted); font-size:12.5px; font-family:'JetBrains Mono',monospace;}
+  .flashcard{
+    width:100%; max-width:520px; min-height:190px; perspective:1200px; cursor:pointer;
+  }
+  .flashcard-inner{
+    position:relative; width:100%; height:100%; min-height:190px;
+    transition:transform .5s cubic-bezier(.2,.8,.2,1); transform-style:preserve-3d;
+  }
+  .flashcard.flipped .flashcard-inner{transform:rotateY(180deg);}
+  .face{
+    position:absolute; inset:0; backface-visibility:hidden;
+    border:1px solid var(--border); border-radius:14px;
+    display:flex; flex-direction:column; align-items:center; justify-content:center;
+    text-align:center; padding:24px;
+  }
+  .face.front{background:var(--panel-2);}
+  .face.back{background:var(--panel-2); transform:rotateY(180deg);}
+  .face .tag{font-family:'JetBrains Mono',monospace; font-size:10.5px; color:var(--muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:12px;}
+  .face .term{font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:21px;}
+  .face .def{font-size:14.5px; line-height:1.5; color:var(--text);}
+  .flash-controls{display:flex; gap:10px; flex-wrap:wrap; justify-content:center;}
+  .flash-controls button, .quiz-controls button{
+    padding:10px 16px; border-radius:8px; border:1px solid var(--border);
+    background:var(--panel-2); color:var(--text); font-family:'IBM Plex Sans',sans-serif;
+    font-weight:600; font-size:13px; cursor:pointer;
+  }
+  .flash-controls button.know{border-color:var(--o1); color:var(--o1);}
+  .flash-controls button.dontknow{border-color:var(--o2n); color:var(--o2n);}
+  .flash-controls button:hover, .quiz-controls button:hover{filter:brightness(1.15);}
+  .flash-stats{display:flex; gap:18px; font-family:'JetBrains Mono',monospace; font-size:12px; color:var(--muted);}
+  .flash-stats b.know-n{color:var(--o1);} .flash-stats b.unk-n{color:var(--o2n);}
+
+  /* quiz */
+  .quiz-top{display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; font-family:'JetBrains Mono',monospace; font-size:12.5px; color:var(--muted);}
+  .quiz-bar{height:5px; background:var(--panel-2); border-radius:3px; overflow:hidden; margin-bottom:18px;}
+  .quiz-bar-fill{height:100%; background:var(--olog); transition:width .3s;}
+  .q-text{font-size:16px; font-weight:600; margin-bottom:16px; line-height:1.4;}
+  .options{display:flex; flex-direction:column; gap:9px;}
+  .opt{
+    text-align:left; padding:12px 14px; border-radius:9px; border:1px solid var(--border);
+    background:var(--panel-2); color:var(--text); font-size:14px; cursor:pointer;
+    font-family:'IBM Plex Sans',sans-serif;
+  }
+  .opt:hover{border-color:var(--olog);}
+  .opt.correct{border-color:var(--o1); background:rgba(79,209,174,0.12);}
+  .opt.wrong{border-color:var(--o2n); background:rgba(232,95,95,0.12);}
+  .opt[disabled]{cursor:default;}
+
+  .opt-check{display:flex; align-items:flex-start; gap:10px; text-align:left; padding:12px 14px; border-radius:9px; border:1px solid var(--border); background:var(--panel-2); cursor:pointer;}
+  .opt-check input{margin-top:3px; accent-color:var(--olog);}
+  .opt-check.correct{border-color:var(--o1); background:rgba(79,209,174,0.12);}
+  .opt-check.wrong{border-color:var(--o2n); background:rgba(232,95,95,0.12);}
+  .opt-check.missed{border-color:var(--on2); background:rgba(224,168,62,0.12);}
+  .source-tag{display:inline-block; font-family:'JetBrains Mono',monospace; font-size:10.5px; padding:2px 8px; border-radius:5px; background:var(--panel-2); border:1px solid var(--border); color:var(--olog); margin-bottom:10px;}
+  .explain{margin-top:14px; padding:12px 14px; border-radius:9px; background:var(--panel-2); border:1px solid var(--border); font-size:13.5px; color:var(--muted); display:none;}
+  .quiz-controls{margin-top:18px; display:flex; justify-content:flex-end;}
+  .quiz-result{text-align:center; padding:30px 10px;}
+  .quiz-result .score{font-family:'Space Grotesk',sans-serif; font-size:48px; font-weight:700;}
+  .quiz-result .score-label{color:var(--muted); font-size:13px; margin-top:4px;}
+  .quiz-result .best{margin-top:10px; font-size:12.5px; color:var(--muted); font-family:'JetBrains Mono',monospace;}
+
+  .lead{color:var(--muted); font-size:13.5px; line-height:1.55; margin-bottom:14px;}
+  @media (max-width:600px){
+    .spectrum .seg{font-size:0;}
+    h1{font-size:19px;}
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="head-inner">
+    <div class="eyebrow">M094 · Информационные технологии · КТ 2024</div>
+    <h1>Алгоритмы и структуры данных</h1>
+    <div class="sub">30 вопросов · 60 минут · 1 из 5 вариантов — тренажёр по конспекту</div>
+    <div class="spectrum">
+      <div class="seg" data-c="o1">O(1)</div>
+      <div class="seg" data-c="olog">O(log n)</div>
+      <div class="seg" data-c="on">O(n)</div>
+      <div class="seg" data-c="onlogn">O(n log n)</div>
+      <div class="seg" data-c="on2">O(n²)</div>
+      <div class="seg" data-c="on3">O(n³)</div>
+      <div class="seg" data-c="o2n">O(2ⁿ)</div>
+      <div class="seg" data-c="onf">O(n!)</div>
+    </div>
+    <div class="spectrum-caption"><span>быстрее</span><span>медленнее</span></div>
+    <nav class="tabs">
+      <button class="active" data-tab="cheat">Шпаргалка</button>
+      <button data-tab="flash">Карточки</button>
+      <button data-tab="quiz">Тест</button>
+      <button data-tab="extra">БД + доп. алгоритмы</button>
+      <button data-tab="official">Официальные примеры</button>
+    </nav>
+  </div>
+</header>
+
+<div class="wrap">
+<main>
+
+  <!-- ================= ШПАРГАЛКА ================= -->
+  <section class="panel active" id="cheat">
+
+    <div class="card">
+      <h2>Сложности структур данных</h2>
+      <table>
+        <tr><th>Структура</th><th>Доступ</th><th>Поиск</th><th>Вставка</th><th>Удаление</th></tr>
+        <tr><td>Массив</td><td class="mono">O(1)</td><td class="mono">O(n)</td><td class="mono">O(n)</td><td class="mono">O(n)</td></tr>
+        <tr><td>Стек</td><td class="mono">O(1) к вершине</td><td class="mono">O(n)</td><td class="mono">O(1)</td><td class="mono">O(1)</td></tr>
+        <tr><td>Очередь</td><td class="mono">O(1) к началу</td><td class="mono">O(n)</td><td class="mono">O(1)</td><td class="mono">O(1)</td></tr>
+        <tr><td>Связный список</td><td class="mono">O(n)</td><td class="mono">O(n)</td><td class="mono">O(1)*</td><td class="mono">O(1)*</td></tr>
+        <tr><td>Хеш-таблица</td><td>—</td><td class="mono">O(1) avg</td><td class="mono">O(1) avg</td><td class="mono">O(1) avg</td></tr>
+        <tr><td>BST сбалансированное</td><td>—</td><td class="mono">O(log n)</td><td class="mono">O(log n)</td><td class="mono">O(log n)</td></tr>
+        <tr><td>Куча</td><td class="mono">O(1) min/max</td><td class="mono">O(n)</td><td class="mono">O(log n)</td><td class="mono">O(log n)</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Сортировки</h2>
+      <table>
+        <tr><th>Алгоритм</th><th>Лучшая</th><th>Средняя</th><th>Худшая</th><th>Память</th></tr>
+        <tr><td>Bubble</td><td class="mono">O(n)</td><td class="mono">O(n²)</td><td class="mono">O(n²)</td><td class="mono">O(1)</td></tr>
+        <tr><td>Selection</td><td class="mono">O(n²)</td><td class="mono">O(n²)</td><td class="mono">O(n²)</td><td class="mono">O(1)</td></tr>
+        <tr><td>Insertion</td><td class="mono">O(n)</td><td class="mono">O(n²)</td><td class="mono">O(n²)</td><td class="mono">O(1)</td></tr>
+        <tr><td>Counting</td><td class="mono">O(n+k)</td><td class="mono">O(n+k)</td><td class="mono">O(n+k)</td><td class="mono">O(k)</td></tr>
+        <tr><td>Radix</td><td class="mono">O(d(n+k))</td><td class="mono">O(d(n+k))</td><td class="mono">O(d(n+k))</td><td class="mono">O(n+k)</td></tr>
+        <tr><td>Merge</td><td class="mono">O(n log n)</td><td class="mono">O(n log n)</td><td class="mono">O(n log n)</td><td class="mono">O(n)</td></tr>
+        <tr><td>Quick</td><td class="mono">O(n log n)</td><td class="mono">O(n log n)</td><td class="mono">O(n²)</td><td class="mono">O(log n)</td></tr>
+        <tr><td>Heap</td><td class="mono">O(n log n)</td><td class="mono">O(n log n)</td><td class="mono">O(n log n)</td><td class="mono">O(1)</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Графовые алгоритмы</h2>
+      <table>
+        <tr><th>Алгоритм</th><th>Для чего</th><th>Условие / сложность</th></tr>
+        <tr><td>BFS</td><td>кратчайший путь без весов</td><td class="mono">O(V+E), очередь</td></tr>
+        <tr><td>DFS</td><td>компоненты, топология</td><td class="mono">O(V+E), стек/рекурсия</td></tr>
+        <tr><td>Дейкстра</td><td>кратчайшие пути от вершины</td><td>без отрицательных весов</td></tr>
+        <tr><td>Беллман-Форд</td><td>пути с отриц. рёбрами</td><td>находит отриц. цикл</td></tr>
+        <tr><td>Флойд-Уоршелл</td><td>все пары кратчайших путей</td><td class="mono">O(V³)</td></tr>
+        <tr><td>Прим</td><td>MST</td><td>растит дерево из вершины</td></tr>
+        <tr><td>Крускал</td><td>MST</td><td>сортирует рёбра + DSU</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Когда какой алгоритм выбирать</h2>
+      <table>
+        <tr><th>Ситуация</th><th>Выбор</th></tr>
+        <tr><td>Массив отсортирован, нужен поиск</td><td>бинарный поиск</td></tr>
+        <tr><td>Нужен быстрый словарь ключ-значение</td><td>хеш-таблица</td></tr>
+        <tr><td>Нужно доставать min/max</td><td>куча / priority queue</td></tr>
+        <tr><td>Кратчайший путь без весов</td><td>BFS</td></tr>
+        <tr><td>Кратчайший путь, веса ≥ 0</td><td>Дейкстра</td></tr>
+        <tr><td>Есть отрицательные рёбра</td><td>Беллман-Форд</td></tr>
+        <tr><td>Нужно MST</td><td>Прим или Крускал</td></tr>
+        <tr><td>Нужны все пары кратчайших путей</td><td>Флойд-Уоршелл</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Ловушки на КТ</h2>
+      <table>
+        <tr><td class="mono">int / int</td><td><code class="mono">10 / 3 = 3</code>, не 3.33 — целочисленное деление</td></tr>
+        <tr><td class="mono">= vs ==</td><td><code class="mono">if (x = 0)</code> присваивает, а не сравнивает</td></tr>
+        <tr><td>Big O</td><td>оставляем старший член: <code class="mono">O(n²+n+100) = O(n²)</code>, константы отбрасываем</td></tr>
+        <tr><td>Quick sort</td><td>средняя O(n log n), худшая O(n²) при плохом опорном</td></tr>
+        <tr><td>Merge sort</td><td>всегда O(n log n), но нужна O(n) память</td></tr>
+        <tr><td>Куча vs BST</td><td>куча — не дерево поиска, произвольный поиск в ней неэффективен</td></tr>
+        <tr><td>Рекурсия</td><td>без базового случая — переполнение стека</td></tr>
+      </table>
+    </div>
+  </section>
+
+  <!-- ================= КАРТОЧКИ ================= -->
+  <section class="panel" id="flash">
+    <div class="card">
+      <h2>Карточки — термины и определения</h2>
+      <p class="lead">Нажми на карточку, чтобы увидеть определение. Отметь, знаешь ли ты термин — счётчик сохранится между визитами.</p>
+      <div class="flash-stage">
+        <div class="flash-progress" id="flashProgress">1 / 1</div>
+        <div class="flashcard" id="flashcard">
+          <div class="flashcard-inner">
+            <div class="face front">
+              <div class="tag">термин</div>
+              <div class="term" id="flashTerm">—</div>
+            </div>
+            <div class="face back">
+              <div class="tag">определение</div>
+              <div class="def" id="flashDef">—</div>
+            </div>
+          </div>
+        </div>
+        <div class="flash-controls">
+          <button id="flashDontKnow" class="dontknow">✕ Не знаю</button>
+          <button id="flashPrev">← Назад</button>
+          <button id="flashShuffle">Перемешать</button>
+          <button id="flashNext">Дальше →</button>
+          <button id="flashKnow" class="know">✓ Знаю</button>
+        </div>
+        <div class="flash-stats">
+          <span>Знаю: <b class="know-n" id="knowCount">0</b></span>
+          <span>Не знаю: <b class="unk-n" id="unkCount">0</b></span>
+          <span id="storageNote" style="opacity:.6"></span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ТЕСТ ================= -->
+  <section class="panel" id="quiz">
+    <div class="card" id="quizCard">
+      <div id="quizActive">
+        <div class="quiz-top">
+          <span id="quizIndex">Вопрос 1 / 30</span>
+          <span id="quizScore">Верно: 0</span>
+        </div>
+        <div class="quiz-bar"><div class="quiz-bar-fill" id="quizBarFill" style="width:3.3%"></div></div>
+        <div class="q-text" id="qText">—</div>
+        <div class="options" id="qOptions"></div>
+        <div class="explain" id="qExplain"></div>
+        <div class="quiz-controls">
+          <button id="quizNext" disabled>Далее →</button>
+        </div>
+      </div>
+      <div id="quizDone" class="quiz-result" style="display:none">
+        <div class="score" id="finalScore">0/30</div>
+        <div class="score-label">правильных ответов</div>
+        <div class="best" id="bestScore"></div>
+        <div class="quiz-controls" style="justify-content:center; margin-top:20px;">
+          <button id="quizRestart">Пройти ещё раз</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= БД + ДОП. АЛГОРИТМЫ (из реальных скринов КТ) ================= -->
+  <section class="panel" id="extra">
+
+    <div class="card">
+      <p class="lead" style="margin-bottom:0">Материал собран из скриншотов реального теста: разделы «Алгоритмдер және деректер құрылымы» (доп. вопросы, которых нет в основном конспекте) и «Деректер базасы» (базы данных). Формулировки вариантов местами восстановлены — сверяйся по смыслу, а не по букве.</p>
+    </div>
+
+    <div class="card">
+      <h2>Доп. вопросы по алгоритмам</h2>
+      <h3>Массивы, указатели, циклы, Си</h3>
+      <table>
+        <tr><td>Обязательные свойства каждой переменной</td><td><b>тип, размер, имя, значение</b></td></tr>
+        <tr><td>Цикл от 20 до 2 с шагом −2</td><td class="mono">for(int i=20; i&gt;=2; i-=2)</td></tr>
+        <tr><td>int x=1,y=2,z=3; a=x+y-2/2+z; → a = ?</td><td>5 (т.к. <span class="mono">2/2=1</span> — целочисленное деление)</td></tr>
+        <tr><td>Обращение к элементу одномерного массива в Си</td><td class="mono">a[2]</td></tr>
+        <tr><td>Присоединение (конкатенация) одной строки к другой</td><td class="mono">strcat()</td></tr>
+        <tr><td>pow(2, 7) = ?</td><td>128</td></tr>
+        <tr><td>Заголовочный файл с макросами для отладки/диагностики</td><td class="mono">&lt;assert.h&gt;</td></tr>
+        <tr><td>Java: объект создаётся ключевым словом</td><td class="mono">new</td></tr>
+        <tr><td>Блок-схема: начальное значение → проверка условия → тело → изменение переменной → назад к проверке</td><td>это цикл <b>for</b></td></tr>
+        <tr><td>Дан код: do{ n++; a/=10; } while(a); для a=1234 → n = ?</td><td>4 (число цифр в 1234)</td></tr>
+        <tr><td>Программа — это</td><td>алгоритм, записанный на понятном компьютеру языке</td></tr>
+        <tr><td>Вид алгоритма вычисления многочлена (схема Горнера)</td><td>циклический</td></tr>
+      </table>
+
+      <h3>Структуры данных и сортировки</h3>
+      <table>
+        <tr><td>Структура типа LIFO</td><td>стек</td></tr>
+        <tr><td>Вставка элемента в <b>неупорядоченный</b> массив</td><td>выполняется за O(1) — не важно место, элементов для сравнения не нужно</td></tr>
+        <tr><td>«Разбиением массива» (partition) называется</td><td>деление элементов массива на группы относительно опорного элемента</td></tr>
+        <tr><td>Псевдокод: цикл по j, если A[j]==x → return true</td><td>линейный поиск</td></tr>
+        <tr><td>Сложность сортировки вставкой</td><td class="mono">O(n²)</td></tr>
+        <tr><td>Сложность сортировки слиянием</td><td class="mono">O(n log n)</td></tr>
+        <tr><td>Куча представима массивом, потому что куча —</td><td>полное двоичное дерево</td></tr>
+        <tr><td>Последний узел кучи</td><td>всегда находится на нижнем (последнем) уровне</td></tr>
+        <tr><td>Время поиска в AVL-дереве</td><td class="mono">O(log n)</td></tr>
+        <tr><td>«Внешний двоюродный» узел дерева</td><td>находится на противоположной от родителя стороне дерева, чем брат его родителя</td></tr>
+      </table>
+
+      <h3>Композиция сложности — частая ловушка</h3>
+      <table>
+        <tr><td>Цикл O(n), а внутри — бинарный поиск O(log n)</td><td class="mono">O(n log n)</td><td style="color:var(--muted)">не O(n + log n)</td></tr>
+        <tr><td>Сначала цикл O(n), потом ещё один отдельный цикл O(n)</td><td class="mono">O(n)</td><td style="color:var(--muted)">последовательные шаги складываются, старший член остаётся</td></tr>
+        <tr><td>Цикл O(n), а внутри него ещё один цикл O(n)</td><td class="mono">O(n²)</td><td style="color:var(--muted)">вложенность — умножение, а не сложение</td></tr>
+      </table>
+
+      <h3>Виды деревьев — полная картина</h3>
+      <table>
+        <tr><td>Наивное (несбалансированное) бинарное дерево</td><td>может выродиться в цепочку, высота O(n)</td></tr>
+        <tr><td>BST</td><td>левый потомок &lt; корня &lt; правый потомок</td></tr>
+        <tr><td>AVL</td><td>всегда сбалансировано, разница высот поддеревьев ≤ 1</td></tr>
+        <tr><td>Красно-чёрное дерево</td><td>тоже самобалансирующееся, использует раскраску узлов (красный/чёрный)</td></tr>
+        <tr><td>Двоичная куча (max-heap / min-heap)</td><td>родитель ≥ потомков (max) или ≤ потомков (min)</td></tr>
+        <tr><td>Лес</td><td>множество независимых деревьев — это НЕ одно дерево</td></tr>
+      </table>
+
+      <h3>Задача о ранце (knapsack) — ловушка</h3>
+      <table>
+        <tr><td>Задача о ранце решается методом</td><td><b>динамического программирования</b>, а не жадным алгоритмом</td></tr>
+      </table>
+      <table>
+        <tr><td>Кратчайшие пути из одной вершины, все веса ≥ 0</td><td>алгоритм <b>Дейкстры</b> (если его нет среди вариантов — единственный из перечисленных с неотрицательными весами: не Беллман-Форд, не Флойд-Уоршелл, не Прим/Крускал — это MST-алгоритмы)</td></tr>
+        <tr><td>Поиск пустых ячеек на <b>больших расстояниях</b> при коллизии (не рядом с исходной позицией)</td><td>двойное хеширование (double hashing)</td></tr>
+        <tr><td>Трёхуровневая архитектура: слои</td><td>интерфейс пользователя · бизнес-логика/алгоритмы обработки · СУБД (хранение данных)</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>SQL: категории команд — частая ловушка</h2>
+      <p class="lead" style="margin-bottom:10px">Самая популярная ловушка на КТ: многие относят <code class="mono">SELECT</code> к DML, потому что он «работает с данными». На самом деле <code class="mono">SELECT</code> — это <b>DQL</b>, потому что он только читает данные и ничего не меняет.</p>
+      <table>
+        <tr><th>Категория</th><th>Расшифровка</th><th>Команды</th></tr>
+        <tr><td class="mono">DDL</td><td>Data Definition Language — структура БД</td><td class="mono">CREATE, ALTER, DROP, TRUNCATE</td></tr>
+        <tr><td class="mono">DML</td><td>Data Manipulation Language — изменение данных</td><td class="mono">INSERT, UPDATE, DELETE, MERGE</td></tr>
+        <tr><td class="mono">DQL</td><td>Data Query Language — получение данных</td><td class="mono">SELECT (+ WHERE, ORDER BY, GROUP BY, HAVING, JOIN, DISTINCT, LIMIT)</td></tr>
+        <tr><td class="mono">DCL</td><td>Data Control Language — права доступа</td><td class="mono">GRANT, REVOKE</td></tr>
+        <tr><td class="mono">TCL</td><td>Transaction Control Language — управление транзакциями</td><td class="mono">COMMIT, ROLLBACK, SAVEPOINT</td></tr>
+      </table>
+
+      <h3>JOIN и операторы выборки</h3>
+      <table>
+        <tr><td class="mono">INNER JOIN</td><td>только совпавшие строки из обеих таблиц</td></tr>
+        <tr><td class="mono">LEFT JOIN</td><td>все строки левой таблицы + совпадения справа</td></tr>
+        <tr><td class="mono">RIGHT JOIN</td><td>все строки правой таблицы + совпадения слева</td></tr>
+        <tr><td class="mono">FULL JOIN</td><td>все строки из обеих таблиц</td></tr>
+        <tr><td class="mono">EXISTS / NOT EXISTS</td><td>проверяет, существует ли хотя бы одна строка / что строки нет</td></tr>
+        <tr><td class="mono">IN</td><td>проверяет, есть ли значение в заданном множестве</td></tr>
+        <tr><td class="mono">DISTINCT</td><td>убирает повторяющиеся строки из результата</td></tr>
+        <tr><td class="mono">GROUP BY / HAVING</td><td>группировка строк / фильтр, применяемый ПОСЛЕ группировки (в отличие от WHERE — до)</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Базы данных — новый блок</h2>
+      <h3>Модель данных и ключи</h3>
+      <table>
+        <tr><td>SQL — это</td><td>стандартный (декларативный) язык определения и манипулирования реляционными БД</td></tr>
+        <tr><td>Основные объекты ER-модели</td><td>сущность, <b>атрибут (свойство)</b>, <b>связь</b></td></tr>
+        <tr><td>Ключ, который несёт смысл сам по себе (напр. ИИН)</td><td><b>естественный</b> ключ</td></tr>
+        <tr><td>Ключ, который создаётся искусственно и не несёт смысла</td><td>суррогатный ключ</td></tr>
+        <tr><td>Операции соединения в реляционной алгебре</td><td>естественное соединение, тета-соединение, внешнее соединение</td></tr>
+        <tr><td>Операция: {1,2,3,4,5} ∩ {1,3,4,8,9}</td><td class="mono">{1,3,4}</td></tr>
+        <tr><td>Степень отношения (relation degree)</td><td>число атрибутов = <b>число столбцов</b></td></tr>
+        <tr><td>Мощность отношения (relation cardinality)</td><td>число <b>строк</b> (кортежей)</td></tr>
+        <tr><td>Что НЕ входит в ACID (ловушка)</td><td>скорость, масштабируемость, доступность — это НЕ свойства транзакций</td></tr>
+        <tr><td>Геораспределённые / NoSQL СУБД</td><td>Google Spanner, Cassandra, <b>MongoDB</b>, Amazon DynamoDB</td></tr>
+        <tr><td>Классические реляционные СУБД</td><td>Oracle, PostgreSQL, MySQL, MariaDB, SQL Server, SQLite</td></tr>
+      </table>
+
+      <h3>SQL: DML, агрегаты, индексы</h3>
+      <table>
+        <tr><td>SELECT предназначен для</td><td>выборки и отображения данных из одной или нескольких таблиц</td></tr>
+        <tr><td>К операциям манипулирования данными (DML) относится</td><td>вставка / изменение / удаление записей в таблице</td></tr>
+        <tr><td>Агрегирующая функция AVG</td><td>возвращает среднее значение по столбцу</td></tr>
+        <tr><td>column NOT BETWEEN 1 AND 3 эквивалентно</td><td class="mono">column &lt; 1 OR column &gt; 3</td></tr>
+        <tr><td>Сортировка по сумме длин фамилии и имени, по возрастанию</td><td class="mono">SELECT last_name, first_name FROM table ORDER BY LENGTH(last_name)+LENGTH(first_name)</td></tr>
+        <tr><td>Создание индекса</td><td class="mono">CREATE INDEX idx ON table1(column1);</td></tr>
+      </table>
+
+      <h3>Транзакции и изоляция</h3>
+      <table>
+        <tr><td>Транзакция состоит из</td><td>операторов DML, образующих одно логически цельное изменение данных</td></tr>
+        <tr><td>Автоматическая фиксация (auto-commit) происходит при</td><td>выполнении одного оператора DML вне явной транзакции</td></tr>
+        <tr><td>Проблемы при параллельном выполнении транзакций (в целом)</td><td>потерянное обновление, неповторяющееся чтение, фантомное чтение</td></tr>
+        <tr><td>Уровень изоляции READ COMMITTED предотвращает</td><td>грязное чтение (dirty read)</td></tr>
+        <tr><td>price &gt; ALL (подзапрос)</td><td>больше МАКСИМУМА значений подзапроса</td></tr>
+        <tr><td>price &gt; ANY (подзапрос)</td><td>больше хотя бы ОДНОГО значения, т.е. больше МИНИМУМА</td></tr>
+        <tr><td>JOIN многих таблиц делает чтение медленным — решение</td><td>денормализация или материализованное представление</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>SQL и БД — ключи, нормализация, индексы (доп.)</h2>
+      <h3>JOIN, NULL, агрегатные функции</h3>
+      <table>
+        <tr><td class="mono">CROSS JOIN</td><td>декартово произведение — каждая строка левой таблицы с каждой строкой правой (n × m строк)</td></tr>
+        <tr><td>NULL</td><td>означает <b>отсутствие</b> значения — это НЕ то же самое, что 0, пустая строка '' или false</td></tr>
+        <tr><td>Проверка на NULL</td><td><code class="mono">IS NULL</code> (не <code class="mono">= NULL</code>)</td></tr>
+        <tr><td class="mono">COUNT(*)</td><td>считает ВСЕ строки, включая с NULL</td></tr>
+        <tr><td class="mono">COUNT(column)</td><td>НЕ считает строки, где column = NULL — поэтому может быть меньше COUNT(*)</td></tr>
+        <tr><td class="mono">COUNT(DISTINCT column)</td><td>считает только уникальные значения</td></tr>
+        <tr><td class="mono">AVG()</td><td>тоже не учитывает NULL при расчёте среднего</td></tr>
+        <tr><td>ORDER BY по умолчанию</td><td class="mono">ASC</td><td style="color:var(--muted)">по убыванию — явно указывать <code class="mono">DESC</code></td></tr>
+        <tr><td>Ограничение числа строк результата</td><td><code class="mono">LIMIT</code> (MySQL) · <code class="mono">TOP</code> (SQL Server) · <code class="mono">ROWNUM</code> (Oracle)</td></tr>
+      </table>
+
+      <h3>Виды ключей</h3>
+      <table>
+        <tr><td>Primary Key</td><td>уникальный, не допускает NULL, один на таблицу</td></tr>
+        <tr><td>Foreign Key</td><td>ссылается на Primary Key другой таблицы, обеспечивает ссылочную целостность</td></tr>
+        <tr><td>Candidate Key</td><td>любой из потенциальных кандидатов на роль первичного ключа</td></tr>
+        <tr><td>Super Key</td><td>любой набор атрибутов, который делает строку уникальной (может включать лишние поля)</td></tr>
+        <tr><td>Composite Key</td><td>составной ключ из нескольких столбцов вместе (например, StudentID + CourseID)</td></tr>
+      </table>
+
+      <h3>Нормальные формы</h3>
+      <table>
+        <tr><td class="mono">0НФ</td><td>есть повторяющиеся группы данных</td></tr>
+        <tr><td class="mono">1НФ</td><td>все значения атомарны (неделимы)</td></tr>
+        <tr><td class="mono">2НФ</td><td>нет частичной зависимости от части составного ключа</td></tr>
+        <tr><td class="mono">3НФ</td><td>нет транзитивной зависимости неключевых атрибутов</td></tr>
+        <tr><td class="mono">BCNF</td><td>усиленная версия 3НФ, встречается реже</td></tr>
+      </table>
+
+      <h3>CRUD, индексы, DELETE vs TRUNCATE vs DROP</h3>
+      <table>
+        <tr><td>CRUD</td><td class="mono">Create→INSERT, Read→SELECT, Update→UPDATE, Delete→DELETE</td></tr>
+        <tr><td>Индексы</td><td>ускоряют поиск/чтение, но замедляют INSERT/UPDATE/DELETE (их тоже нужно обновлять)</td></tr>
+        <tr><td>Кластерный индекс</td><td>определяет физический порядок хранения строк — один на таблицу</td></tr>
+        <tr><td>Некластерный индекс</td><td>отдельная структура-указатель, таких может быть несколько</td></tr>
+        <tr><td class="mono">DELETE</td><td>удаляет строки по условию, можно откатить (ROLLBACK), структура таблицы остаётся</td></tr>
+        <tr><td class="mono">TRUNCATE</td><td>удаляет ВСЕ строки сразу, быстрее DELETE, структуру не трогает</td></tr>
+        <tr><td class="mono">DROP</td><td>удаляет саму таблицу целиком, включая структуру</td></tr>
+        <tr><td>Устойчивая (stable) сортировка</td><td>сохраняет относительный порядок равных элементов (например, insertion/merge/bubble sort устойчивы, а quick/heap/selection — обычно нет)</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Мини-тест: доп. алгоритмы + БД</h2>
+      <div id="quiz2Active">
+        <div class="quiz-top">
+          <span id="quiz2Index">Вопрос 1 / 1</span>
+          <span id="quiz2Score">Верно: 0</span>
+        </div>
+        <div class="quiz-bar"><div class="quiz-bar-fill" id="quiz2BarFill" style="width:3%"></div></div>
+        <div class="q-text" id="q2Text">—</div>
+        <div class="options" id="q2Options"></div>
+        <div class="explain" id="q2Explain"></div>
+        <div class="quiz-controls">
+          <button id="quiz2Next" disabled>Далее →</button>
+        </div>
+      </div>
+      <div id="quiz2Done" class="quiz-result" style="display:none">
+        <div class="score" id="finalScore2">0/0</div>
+        <div class="score-label">правильных ответов</div>
+        <div class="best" id="bestScore2"></div>
+        <div class="quiz-controls" style="justify-content:center; margin-top:20px;">
+          <button id="quiz2Restart">Пройти ещё раз</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ================= ОФИЦИАЛЬНЫЕ ПРИМЕРЫ (testcenter.kz, M094, 2026) ================= -->
+  <section class="panel" id="official">
+
+    <div class="card">
+      <span class="source-tag">источник: testcenter.kz · образцы КТ M094 · 2026</span>
+      <p class="lead" style="margin-bottom:0">Это официальные примеры заданий Национального центра тестирования по обоим профильным предметам: «Алгоритмдер және деректер құрылымы» (30 вопросов, 1 верный ответ) и «Деректер базасы» (20 вопросов, один <b>или несколько</b> верных ответов). Переведено с казахского, часть формулировок сокращена для ясности.</p>
+    </div>
+
+    <div class="card">
+      <h2>Предмет 1 — Алгоритмы и структуры данных: официальные образцы</h2>
+      <table>
+        <tr><td>Число оценок заранее неизвестно, нужно найти их среднее — какая структура?</td><td><b>условный цикл</b> (while) — не параметрический, т.к. счётчик неизвестен заранее</td></tr>
+        <tr><td>Кратчайший путь в графе с рёбрами <b>отрицательного</b> веса</td><td>алгоритм <b>Беллмана-Форда</b></td></tr>
+        <tr><td>Построение остовного (каркасного) дерева графа</td><td>алгоритмы <b>Прима и Крускала</b></td></tr>
+        <tr><td>Циклическая конструкция для обхода двумерного массива в C++</td><td><b>вложенный цикл</b></td></tr>
+        <tr><td>Абстрактный тип «очередь» организуется через</td><td><b>однонаправленный связный список</b></td></tr>
+        <tr><td>Алгоритм проходит по данным, затем в отдельном цикле делает O(log n) на элемент → сложность</td><td class="mono">O(n log n)</td></tr>
+        <tr><td>Набор элементов данных РАЗНОГО типа в C++</td><td><b>структура (struct)</b></td></tr>
+        <tr><td>Сложность DELETE в хеш-таблице методом цепочек в среднем случае</td><td class="mono">O(1 + n/m)</td></tr>
+        <tr><td>Преимущество двусвязного списка</td><td>возможность восстановить/пройти список в обе стороны при повреждении одной ссылки <span style="color:var(--muted)">(формулировка в оригинале неоднозначна)</span></td></tr>
+        <tr><td>Тип дерева из 10 элементов</td><td style="color:var(--muted)">в оригинале был рисунок дерева — без него однозначно не определить, пропущено в тесте ниже</td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Предмет 2 — Базы данных: официальные образцы</h2>
+      <table>
+        <tr><td>Функции ядра СУБД</td><td>управление данными во внешней памяти, управление буферами ОЗУ, управление транзакциями и журналирование, компиляция операторов языка БД в исполняемую программу</td></tr>
+        <tr><td>Свойства (типы) атрибута объекта в ER-модели</td><td>однозначный (single-valued), многозначный, простой атрибут</td></tr>
+        <tr><td>Свойства транзакции</td><td>целостность/согласованность, атомарность, сериализуемость (часть классических ACID)</td></tr>
+        <tr><td>Ограничение на внешние ключи для целостности данных</td><td><b>ссылочное (referential)</b> ограничение</td></tr>
+        <tr><td>Основные компоненты ER-модели</td><td><b>объекты, связи, атрибуты</b></td></tr>
+        <tr><td>Запрос «все товары, на которые нет заказов»</td><td class="mono">SELECT * FROM products WHERE product_id NOT IN (SELECT DISTINCT product_id FROM orders);</td></tr>
+        <tr><td>Степень отношения в реляционной модели</td><td>число полей = <b>число столбцов</b> (не строк!)</td></tr>
+        <tr><td>Геораспределённые / нереляционные СУБД</td><td><b>Google Spanner, Cassandra, Amazon DynamoDB</b> (в отличие от Oracle, PostgreSQL, MySQL, MS SQL Server)</td></tr>
+        <tr><td>Операция реляционной алгебры — выбор указанных столбцов отношения</td><td><b>проекция</b></td></tr>
+      </table>
+    </div>
+
+    <div class="card">
+      <h2>Тест: официальные образцы — Алгоритмы (1 верный ответ)</h2>
+      <div id="quiz3Active">
+        <div class="quiz-top">
+          <span id="quiz3Index">Вопрос 1 / 1</span>
+          <span id="quiz3Score">Верно: 0</span>
+        </div>
+        <div class="quiz-bar"><div class="quiz-bar-fill" id="quiz3BarFill" style="width:3%"></div></div>
+        <div class="q-text" id="q3Text">—</div>
+        <div class="options" id="q3Options"></div>
+        <div class="explain" id="q3Explain"></div>
+        <div class="quiz-controls"><button id="quiz3Next" disabled>Далее →</button></div>
+      </div>
+      <div id="quiz3Done" class="quiz-result" style="display:none">
+        <div class="score" id="finalScore3">0/0</div>
+        <div class="score-label">правильных ответов</div>
+        <div class="best" id="bestScore3"></div>
+        <div class="quiz-controls" style="justify-content:center; margin-top:20px;"><button id="quiz3Restart">Пройти ещё раз</button></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <h2>Тест: официальные образцы — Базы данных (один или несколько верных)</h2>
+      <p class="lead">Отметь все верные варианты и нажми «Проверить».</p>
+      <div id="quiz4Active">
+        <div class="quiz-top">
+          <span id="quiz4Index">Вопрос 1 / 1</span>
+          <span id="quiz4Score">Верно: 0</span>
+        </div>
+        <div class="quiz-bar"><div class="quiz-bar-fill" id="quiz4BarFill" style="width:3%"></div></div>
+        <div class="q-text" id="q4Text">—</div>
+        <div class="options" id="q4Options"></div>
+        <div class="explain" id="q4Explain"></div>
+        <div class="quiz-controls">
+          <button id="quiz4Check">Проверить</button>
+          <button id="quiz4Next" disabled>Далее →</button>
+        </div>
+      </div>
+      <div id="quiz4Done" class="quiz-result" style="display:none">
+        <div class="score" id="finalScore4">0/0</div>
+        <div class="score-label">полностью правильных ответов</div>
+        <div class="best" id="bestScore4"></div>
+        <div class="quiz-controls" style="justify-content:center; margin-top:20px;"><button id="quiz4Restart">Пройти ещё раз</button></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<script>
+/* ---------------- storage helpers (personal, per-user) ---------------- */
+async function storageGet(key){
+  try{
+    if(!window.storage) return null;
+    const r = await window.storage.get(key);
+    return r ? JSON.parse(r.value) : null;
+  }catch(e){ return null; }
+}
+async function storageSet(key, value){
+  try{
+    if(!window.storage) return;
+    await window.storage.set(key, JSON.stringify(value));
+  }catch(e){ /* ignore */ }
+}
+
+/* ---------------- tabs ---------------- */
+document.querySelectorAll('nav.tabs button').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('nav.tabs button').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('section.panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.getElementById(btn.dataset.tab).classList.add('active');
+  });
+});
+
+/* ---------------- FLASHCARDS ---------------- */
+const flashData = [
+  {term:"Алгоритм", def:"Точное описание действий, которое за конечное число шагов приводит к результату."},
+  {term:"Указатель", def:"Переменная, которая хранит адрес ячейки памяти."},
+  {term:"Базовый случай", def:"Условие остановки рекурсии — без него будет бесконечный вызов и переполнение стека."},
+  {term:"Стек вызовов", def:"Область памяти, где хранятся активные (не завершённые) вызовы функций."},
+  {term:"Big O", def:"Оценка того, как растёт время или память алгоритма при увеличении размера входных данных n."},
+  {term:"O(1)", def:"Константная сложность — время не зависит от размера входа. Пример: доступ к a[i]."},
+  {term:"O(log n)", def:"Логарифмическая сложность — на каждом шаге объём работы делится пополам. Пример: бинарный поиск."},
+  {term:"Бинарный поиск", def:"Поиск в отсортированном массиве делением области поиска пополам, O(log n)."},
+  {term:"Хеш-функция", def:"Функция, которая превращает ключ в индекс массива для хеш-таблицы."},
+  {term:"Коллизия", def:"Ситуация, когда разные ключи хеш-функция отобразила в один и тот же индекс."},
+  {term:"Separate chaining", def:"Способ разрешения коллизий: в каждой ячейке хеш-таблицы хранится список элементов."},
+  {term:"Load factor", def:"Коэффициент заполнения хеш-таблицы, обычно n / m (элементы / размер таблицы)."},
+  {term:"Стек (LIFO)", def:"Last In, First Out — последний добавленный элемент извлекается первым. Операции push/pop."},
+  {term:"Очередь (FIFO)", def:"First In, First Out — первый добавленный элемент извлекается первым. Операции enqueue/dequeue."},
+  {term:"BST", def:"Двоичное дерево поиска: у каждого узла левое поддерево меньше, правое — больше ключа узла."},
+  {term:"AVL-дерево", def:"Самобалансирующееся дерево поиска, где разница высот поддеревьев не больше 1."},
+  {term:"Inorder обход", def:"Обход BST: левое поддерево → корень → правое поддерево. Даёт ключи по возрастанию."},
+  {term:"Двоичная куча", def:"Дерево, где родитель всегда больше (max-heap) или меньше (min-heap) своих детей. Не является BST."},
+  {term:"BFS", def:"Поиск в ширину: обходит граф по уровням через очередь. Даёт кратчайший путь в невзвешенном графе."},
+  {term:"DFS", def:"Поиск в глубину: обходит граф через стек или рекурсию, используется для компонент и топологии."},
+  {term:"Алгоритм Дейкстры", def:"Находит кратчайшие пути от одной вершины; не работает при отрицательных весах рёбер."},
+  {term:"Беллман-Форд", def:"Находит кратчайшие пути даже при отрицательных рёбрах; умеет обнаружить отрицательный цикл."},
+  {term:"Флойд-Уоршелл", def:"Находит кратчайшие пути между всеми парами вершин за O(V³)."},
+  {term:"MST (Прим)", def:"Минимальное остовное дерево строится жадным расширением от одной вершины."},
+  {term:"MST (Крускал)", def:"Минимальное остовное дерево строится сортировкой рёбер по весу и системой непересекающихся множеств (DSU)."},
+  {term:"0/1 рюкзак", def:"Задача динамического программирования: каждый предмет можно либо взять целиком, либо не брать."},
+  {term:"Мемоизация", def:"Оптимизация рекурсии: сохранение результатов уже решённых подзадач в кэш."},
+  {term:"DFA", def:"Детерминированный конечный автомат — из каждого состояния по каждому символу ровно один переход."},
+  {term:"Устойчивость сортировки", def:"Свойство сохранять относительный порядок равных элементов после сортировки."},
+  {term:"Quick sort", def:"Сортировка через опорный элемент и разделение; средняя O(n log n), худшая O(n²) при плохом опорном."},
+];
+
+let flashOrder = flashData.map((_,i)=>i);
+let flashIdx = 0;
+let knowSet = new Set();
+let unkSet = new Set();
+
+function renderFlash(){
+  const item = flashData[flashOrder[flashIdx]];
+  document.getElementById('flashTerm').textContent = item.term;
+  document.getElementById('flashDef').textContent = item.def;
+  document.getElementById('flashcard').classList.remove('flipped');
+  document.getElementById('flashProgress').textContent = (flashIdx+1)+' / '+flashData.length;
+  document.getElementById('knowCount').textContent = knowSet.size;
+  document.getElementById('unkCount').textContent = unkSet.size;
+}
+function shuffleFlash(){
+  for(let i=flashOrder.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [flashOrder[i],flashOrder[j]]=[flashOrder[j],flashOrder[i]];
+  }
+  flashIdx = 0;
+  renderFlash();
+}
+document.getElementById('flashcard').addEventListener('click', ()=>{
+  document.getElementById('flashcard').classList.toggle('flipped');
+});
+document.getElementById('flashNext').addEventListener('click', ()=>{
+  flashIdx = (flashIdx+1) % flashData.length;
+  renderFlash();
+});
+document.getElementById('flashPrev').addEventListener('click', ()=>{
+  flashIdx = (flashIdx-1+flashData.length) % flashData.length;
+  renderFlash();
+});
+document.getElementById('flashShuffle').addEventListener('click', shuffleFlash);
+document.getElementById('flashKnow').addEventListener('click', ()=>{
+  const id = flashOrder[flashIdx];
+  knowSet.add(id); unkSet.delete(id);
+  storageSet('flash-known', Array.from(knowSet));
+  storageSet('flash-unknown', Array.from(unkSet));
+  document.getElementById('flashNext').click();
+});
+document.getElementById('flashDontKnow').addEventListener('click', ()=>{
+  const id = flashOrder[flashIdx];
+  unkSet.add(id); knowSet.delete(id);
+  storageSet('flash-known', Array.from(knowSet));
+  storageSet('flash-unknown', Array.from(unkSet));
+  document.getElementById('flashNext').click();
+});
+
+(async function initFlash(){
+  const k = await storageGet('flash-known');
+  const u = await storageGet('flash-unknown');
+  if(k) knowSet = new Set(k);
+  if(u) unkSet = new Set(u);
+  renderFlash();
+})();
+
+/* ---------------- QUIZ ---------------- */
+const quizData = [
+  {q:"Какова сложность бинарного поиска?", opts:["O(n)","O(log n)","O(n²)","O(1)"], a:1, ex:"Каждый шаг уменьшает область поиска примерно в 2 раза."},
+  {q:"Какая структура работает по принципу LIFO?", opts:["Очередь","Стек","Дерево","Хеш-таблица"], a:1, ex:"Последний добавленный элемент извлекается первым."},
+  {q:"Какая структура работает по принципу FIFO?", opts:["Стек","Куча","Очередь","Список"], a:2, ex:"Первый добавленный элемент извлекается первым."},
+  {q:"Какая сортировка в худшем случае имеет O(n²), но в среднем O(n log n)?", opts:["Сортировка слиянием","Пузырьковая сортировка","Быстрая сортировка","Сортировка вставками"], a:2, ex:"Плохой выбор опорного элемента может дать разбиение 0 и n-1."},
+  {q:"Какая сортировка требует дополнительную память O(n)?", opts:["Быстрая сортировка","Сортировка слиянием","Сортировка выбором","Пирамидальная сортировка"], a:1, ex:"При слиянии используются временные массивы."},
+  {q:"Что делает хеш-функция?", opts:["Сортирует ключи","Преобразует ключ в индекс","Удаляет коллизии","Балансирует дерево"], a:1, ex:"Индекс используется для размещения элемента в таблице."},
+  {q:"Как называется ситуация, когда два ключа получили один индекс?", opts:["Коллизия","Инверсия","Рекурсия","Итерация"], a:0, ex:"Её решают цепочками или открытой адресацией."},
+  {q:"Какой алгоритм нужен для кратчайшего пути в невзвешенном графе?", opts:["DFS","Дейкстра","BFS","Флойд-Уоршелл"], a:2, ex:"BFS обходит уровни и даёт минимальное число рёбер."},
+  {q:"Какой алгоритм допускает отрицательные рёбра?", opts:["Дейкстра","Беллман-Форд","Прим","Крускал"], a:1, ex:"Но отрицательный цикл делает кратчайший путь неопределённым."},
+  {q:"Какая структура используется в рекурсии?", opts:["Очередь","Куча","Стек вызовов","Хеш-таблица"], a:2, ex:"Каждый вызов хранится в стеке."},
+  {q:"Что обязательно должно быть в рекурсивной функции?", opts:["Цикл for","Указатель","Базовый случай","Массив"], a:2, ex:"Он останавливает рекурсию."},
+  {q:"Что даёт inorder обход BST?", opts:["Ключи по убыванию","Случайный порядок","Ключи по возрастанию","Только корень"], a:2, ex:"Сначала левое поддерево, потом корень, потом правое."},
+  {q:"Что быстрее в среднем: поиск в массиве или хеш-таблице?", opts:["Массив","Хеш-таблица","Одинаково","Зависит от языка"], a:1, ex:"Средний поиск O(1), но зависит от коллизий."},
+  {q:"Что означает O(1)?", opts:["Линейная сложность","Квадратичная сложность","Константная сложность","Логарифмическая сложность"], a:2, ex:"Время не зависит от размера входа."},
+  {q:"Какой алгоритм строит MST, сортируя рёбра?", opts:["Прим","Крускал","Дейкстра","Беллман-Форд"], a:1, ex:"Он добавляет рёбра по возрастанию веса, избегая циклов."},
+  {q:"Какой алгоритм строит MST, расширяя дерево из вершины?", opts:["Крускал","Флойд-Уоршелл","Прим","DFS"], a:2, ex:"Каждый раз выбирает минимальное ребро из текущего дерева."},
+  {q:"Какая сортировка основана на двоичной куче?", opts:["Merge sort","Heap sort","Quick sort","Radix sort"], a:1, ex:"Сначала строится куча, затем извлекаются элементы."},
+  {q:"Что такое load factor в хеш-таблице?", opts:["Скорость хеш-функции","Коэффициент заполнения","Число коллизий","Размер ключа"], a:1, ex:"Обычно n / m, где n — элементы, m — размер таблицы."},
+  {q:"Что быстрее: O(n log n) или O(n²) при больших n?", opts:["O(n²)", "O(n log n)", "Одинаково", "Зависит от языка"], a:1, ex:"Она растёт медленнее."},
+  {q:"Что такое указатель?", opts:["Тип цикла","Переменная, хранящая адрес","Оператор сравнения","Имя функции"], a:1, ex:"Через указатель можно обращаться к памяти."},
+  {q:"Какой обход графа использует очередь?", opts:["DFS","BFS","Inorder","Postorder"], a:1, ex:"BFS хранит вершины следующего уровня в очереди."},
+  {q:"Какой обход графа использует стек или рекурсию?", opts:["BFS","DFS","Дейкстра","Прим"], a:1, ex:"DFS уходит вглубь, используя стек вызовов."},
+  {q:"Какой алгоритм ищет все пары кратчайших путей?", opts:["BFS","Дейкстра","Флойд-Уоршелл","Крускал"], a:2, ex:"Работает за O(V³), перебирая промежуточные вершины."},
+  {q:"Как называется дерево поиска с балансировкой по высоте?", opts:["BST","AVL","Куча","Trie"], a:1, ex:"Разница высот поддеревьев в AVL не превышает 1."},
+  {q:"Что хранит узел односвязного списка?", opts:["Только значение","Значение и ссылку next","Два указателя next и prev","Индекс массива"], a:1, ex:"Двусвязный список хранит ещё и prev."},
+  {q:"Какая операция стека добавляет элемент?", opts:["pop","push","enqueue","dequeue"], a:1, ex:"push кладёт элемент на вершину стека."},
+  {q:"Какая операция очереди удаляет элемент из начала?", opts:["push","top","dequeue","peek"], a:2, ex:"dequeue (или pop в очереди) убирает первый вошедший элемент."},
+  {q:"Какой метод коллизий хранит список в ячейке?", opts:["Linear probing","Double hashing","Separate chaining","Quadratic probing"], a:2, ex:"В каждой ячейке хранится список элементов с одинаковым индексом."},
+  {q:"Какая сортировка работает по разрядам числа?", opts:["Counting sort","Radix sort","Heap sort","Bubble sort"], a:1, ex:"Radix sort сортирует поразрядно, начиная с младшего или старшего."},
+  {q:"Какая сложность у двух вложенных циклов по n?", opts:["O(n)","O(log n)","O(n²)","O(n log n)"], a:2, ex:"Каждый из n внешних шагов делает n внутренних — n × n."},
+];
+
+let quizOrder = [];
+let quizIdx = 0;
+let quizScore = 0;
+let answered = false;
+
+function buildQuizOrder(){
+  quizOrder = quizData.map((_,i)=>i);
+  for(let i=quizOrder.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [quizOrder[i],quizOrder[j]]=[quizOrder[j],quizOrder[i]];
+  }
+}
+
+function renderQuiz(){
+  answered = false;
+  document.getElementById('quizActive').style.display = 'block';
+  document.getElementById('quizDone').style.display = 'none';
+  const qi = quizOrder[quizIdx];
+  const item = quizData[qi];
+  document.getElementById('quizIndex').textContent = 'Вопрос '+(quizIdx+1)+' / '+quizData.length;
+  document.getElementById('quizScore').textContent = 'Верно: '+quizScore;
+  document.getElementById('quizBarFill').style.width = (((quizIdx)/quizData.length)*100)+'%';
+  document.getElementById('qText').textContent = item.q;
+  document.getElementById('qExplain').style.display = 'none';
+  document.getElementById('qExplain').textContent = '';
+  document.getElementById('quizNext').disabled = true;
+
+  // shuffle options, keep track of correct index
+  const optOrder = item.opts.map((_,i)=>i);
+  for(let i=optOrder.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [optOrder[i],optOrder[j]]=[optOrder[j],optOrder[i]];
+  }
+  const box = document.getElementById('qOptions');
+  box.innerHTML = '';
+  optOrder.forEach(origIdx=>{
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.textContent = item.opts[origIdx];
+    b.addEventListener('click', ()=>{
+      if(answered) return;
+      answered = true;
+      const isCorrect = origIdx === item.a;
+      if(isCorrect){ b.classList.add('correct'); quizScore++; }
+      else{
+        b.classList.add('wrong');
+        [...box.children].forEach(c=>{ if(c.textContent===item.opts[item.a]) c.classList.add('correct'); });
+      }
+      [...box.children].forEach(c=>c.disabled = true);
+      document.getElementById('qExplain').style.display = 'block';
+      document.getElementById('qExplain').textContent = item.ex;
+      document.getElementById('quizScore').textContent = 'Верно: '+quizScore;
+      document.getElementById('quizNext').disabled = false;
+    });
+    box.appendChild(b);
+  });
+}
+
+async function finishQuiz(){
+  document.getElementById('quizActive').style.display = 'none';
+  document.getElementById('quizDone').style.display = 'block';
+  document.getElementById('finalScore').textContent = quizScore+'/'+quizData.length;
+  const best = await storageGet('quiz-best');
+  let bestScore = best && best.score !== undefined ? best.score : -1;
+  if(quizScore > bestScore){
+    bestScore = quizScore;
+    await storageSet('quiz-best', {score:bestScore});
+  }
+  document.getElementById('bestScore').textContent = 'Лучший результат: '+bestScore+'/'+quizData.length;
+}
+
+document.getElementById('quizNext').addEventListener('click', ()=>{
+  quizIdx++;
+  if(quizIdx >= quizData.length){
+    document.getElementById('quizBarFill').style.width = '100%';
+    finishQuiz();
+  } else {
+    renderQuiz();
+  }
+});
+document.getElementById('quizRestart').addEventListener('click', ()=>{
+  quizIdx = 0; quizScore = 0;
+  buildQuizOrder();
+  renderQuiz();
+});
+
+buildQuizOrder();
+renderQuiz();
+
+/* ---------------- QUIZ 2: доп. алгоритмы + БД (из скринов реального теста) ---------------- */
+const quiz2Data = [
+  {q:"Обязательные свойства каждой переменной в языке программирования:", opts:["только размер","тип, размер, имя, значение","только тип","только спецификатор знака"], a:1, ex:"У переменной всегда есть тип (определяет размер и операции), имя и значение."},
+  {q:"Как изменить управляющую переменную цикла от 20 до 2 с шагом −2?", opts:["for(i=20; i<=2; i+=2)","for(i=20; i>=2; i-=2)","for(i=2; i>=20; i-=2)","for(i=20; i>2; i+=2)"], a:1, ex:"Начинаем с 20, идём пока i>=2, уменьшаем на 2 каждый раз."},
+  {q:"int x=1,y=2,z=3; a=x+y-2/2+z; Чему равно a?", opts:["3.5","3","5","1"], a:2, ex:"2/2 — целочисленное деление = 1. a = 1+2-1+3 = 5."},
+  {q:"Правильная запись обращения к элементу одномерного массива в Си:", opts:["a(2)","a[2]","a{2}","a->2"], a:1, ex:"В Си индекс массива указывается в квадратных скобках."},
+  {q:"Присоединение содержимого одной строки к другой в Си выполняет функция:", opts:["strlen()","strcat()","strcpy()","strcmp()"], a:1, ex:"strcat() дописывает вторую строку в конец первой."},
+  {q:"Результат pow(2, 7):", opts:["128","256","64","127"], a:0, ex:"2 в степени 7 = 128."},
+  {q:"Заголовочный файл, содержащий макросы для диагностики при отладке программы:", opts:["<stdio.h>","<assert.h>","<string.h>","<setjmp.h>"], a:1, ex:"assert.h предоставляет макрос assert() для проверки условий во время отладки."},
+  {q:"В Java объект создаётся с указанием имени класса ключевым словом:", opts:["new","this","class","void"], a:0, ex:"new выделяет память и вызывает конструктор класса."},
+  {q:"Дан код: do { n++; a/=10; } while(a); для a=1234. Чему равно n после выполнения?", opts:["3","4","5","10"], a:1, ex:"Цикл выполняется по одному разу на каждую цифру числа 1234 — 4 цифры."},
+  {q:"Оператор, используемый для выполнения условия (проверки истина/ложь и ветвления):", opts:["for","if","while (без условия)","return"], a:1, ex:"if проверяет условие и выполняет одну из двух ветвей кода."},
+  {q:"В языке Си «строительными блоками» программы НЕ являются:", opts:["функции стандартной библиотеки Си","функции, написанные другими людьми","функции, которые вы создадите сами","функции, сохранённые другим пользователем (в чужом личном аккаунте)"], a:3, ex:"Реальные строительные блоки — это переиспользуемые функции (свои, чужие библиотечные), а не абстрактные «функции, сохранённые другим пользователем» — такой категории в Си не существует."},
+  {q:"«Внешний двоюродный» узел (external cousin) дерева — это узел, который:", opts:["является родителем текущего узла","находится на противоположной от родителя стороне дерева, чем «брат» его родителя","всегда является листом","имеет то же значение, что и его родитель"], a:1, ex:"Внешний двоюродный узел зеркально симметричен относительно общего предка, в отличие от обычного «брата»."},
+  {q:"Пример алгоритма ОБЩЕГО (обобщённого) вида, а не частного случая:", opts:["2x+3=0","5x²+2x=0","6x²=0","x=0"], a:1, ex:"5x²+2x=0 — это общий вид квадратного уравнения (с двумя разными коэффициентами и без свободного члена), тогда как остальные — вырожденные частные случаи."},
+  {q:"Псевдокод с массивом COUNT, где для каждой пары элементов сравнивается A[j] и A[i] и увеличивается счётчик — это:", opts:["сортировка вставкой","двоичный поиск","алгоритм подсчёта сравнений (comparison counting sort)","поразрядная сортировка"], a:2, ex:"Такой алгоритм определяет итоговую позицию каждого элемента по количеству элементов, которые меньше него — это сортировка подсчётом сравнений."},
+  {q:"Вставка элемента в НЕупорядоченный массив:", opts:["требует сдвига всех элементов","выполняется за постоянное время независимо от количества элементов","требует бинарного поиска места","всегда O(n log n)"], a:1, ex:"Раз порядок не важен, элемент можно просто добавить в конец за O(1)."},
+  {q:"«Разбиением массива» (partition) в контексте быстрой сортировки называется:", opts:["удаление одного элемента","деление элементов массива на группы относительно опорного элемента","сортировка вставкой","слияние двух массивов"], a:1, ex:"Partition делит массив на элементы меньше и больше опорного (pivot)."},
+  {q:"Псевдокод: цикл по j; если A[j]==x — вернуть true. Это:", opts:["двоичный поиск","линейный поиск","пузырьковая сортировка","сортировка кучей"], a:1, ex:"Последовательная проверка каждого элемента — линейный поиск."},
+  {q:"Средняя сложность сортировки вставкой:", opts:["O(n)","O(n²)","O(n log n)","O(log n)"], a:1, ex:"Для каждого из n элементов может потребоваться до n сдвигов."},
+  {q:"Сложность сортировки слиянием:", opts:["O(n²)","O(n)","O(n log n)","O(2ⁿ)"], a:2, ex:"Слияние делит массив пополам (log n уровней) и сливает за O(n) на каждом уровне."},
+  {q:"Куча (heap) может быть представлена в виде массива, потому что куча:", opts:["является тернарным деревом","является полным двоичным деревом","не упорядочена","хранит только уникальные значения"], a:1, ex:"Полное дерево без «дырок» удобно нумеровать индексами массива."},
+  {q:"Последний узел кучи всегда:", opts:["находится на верхнем уровне","является корнем","находится на нижнем (последнем) уровне","имеет двух детей"], a:2, ex:"Куча заполняется слева направо на последнем уровне."},
+  {q:"Время поиска в сбалансированном AVL-дереве:", opts:["O(n)","O(log n)","O(n²)","O(1)"], a:1, ex:"Высота AVL-дерева всегда O(log n) благодаря балансировке."},
+  {q:"Алгоритм кратчайших путей из одной вершины при неотрицательных весах рёбер:", opts:["алгоритм Прима","алгоритм Крускала","алгоритм Дейкстры","алгоритм Флойда-Уоршелла"], a:2, ex:"Прим и Крускал строят MST, а не кратчайшие пути; Флойд-Уоршелл ищет пути между всеми парами. Условие «одна вершина + неотрицательные веса» — это Дейкстра."},
+  {q:"Поиск пустых ячеек на БОЛЬШИХ расстояниях от исходной позиции хеша при коллизии — это:", opts:["линейное пробирование","метод цепочек","двойное хеширование","квадратичное пробирование"], a:2, ex:"Двойное хеширование задаёт шаг вторым хешем, уводя далеко от исходной позиции."},
+  {q:"Трёхуровневая архитектура НЕ включает уровень:", opts:["пользовательского интерфейса","реализации бизнес-логики / алгоритмов обработки","хранения данных (СУБД)","масштабируемости"], a:3, ex:"Классические три слоя: интерфейс, бизнес-логика, данные — «масштабируемость» не является отдельным слоем архитектуры."},
+  {q:"SQL является:", opts:["объектно-ориентированным языком программирования","стандартным языком определения и манипулирования реляционными БД","инструментом обработки медиафайлов","процедурным языком общего назначения"], a:1, ex:"SQL — декларативный стандарт для работы с реляционными базами данных."},
+  {q:"Основные объекты ER-модели (модели «сущность-связь»):", opts:["запрос и параметры","свойство (атрибут) и связь","ячейка и типы данных","таблица и ресурс"], a:1, ex:"ER-модель строится вокруг сущностей, их свойств (атрибутов) и связей между ними."},
+  {q:"Ключ, который используется для уникальной идентификации строки и содержит смысл сам по себе:", opts:["суррогатный", "естественный","составной","внешний"], a:1, ex:"Естественный ключ основан на реальном атрибуте с бизнес-смыслом (например, ИИН); суррогатный создаётся искусственно и смысла не несёт."},
+  {q:"Операция {1,2,3,4,5} INTERSECT {1,3,4,8,9} даёт множество:", opts:["{8,9}","{1,2,3,4,5,8,9}","{1,3,4}","{2,8,9}"], a:2, ex:"Пересечение — элементы, встречающиеся в обоих множествах: 1, 3 и 4."},
+  {q:"К операциям соединения (JOIN) в реляционной алгебре относятся:", opts:["естественное, тета- и внешнее соединение","только внутреннее соединение","альфа- и бета-соединение","только декартово произведение"], a:0, ex:"Классические виды соединений: natural join, theta join (по произвольному условию) и outer join (с сохранением непарных строк)."},
+  {q:"Запрос должен отсортировать сотрудников по сумме длин фамилии и имени, по возрастанию. Какой ORDER BY верный?", opts:["ORDER BY last_name + first_name","ORDER BY LENGTH(last_name) + LENGTH(first_name)","ORDER BY LENGTH(last_name) + LENGTH(first_name) DESC","ORDER BY CONCAT(last_name, first_name) DESC"], a:1, ex:"Нужна сумма длин строк по возрастанию (ASC — сортировка по умолчанию), а не длина конкатенации и не убывание."},
+  {q:"Оператор SELECT предназначен для:", opts:["добавления новых записей","выборки и отображения данных из таблиц","изменения структуры таблицы","удаления таблицы"], a:1, ex:"SELECT — оператор чтения (DQL/DML) данных."},
+  {q:"К операциям манипулирования данными (DML) относится:", opts:["создание таблицы (CREATE TABLE)","вставка новых записей в таблицу (INSERT)","выдача прав пользователю (GRANT)","определение ограничений целостности при создании схемы"], a:1, ex:"INSERT/UPDATE/DELETE/SELECT — это DML; CREATE/ALTER — DDL; GRANT — DCL."},
+  {q:"Агрегирующая функция AVG:", opts:["считает количество строк","возвращает среднее значение по столбцу","сортирует по возрастанию","возвращает сумму значений"], a:1, ex:"AVG = среднее арифметическое значений в столбце."},
+  {q:"Условие «column NOT BETWEEN 1 AND 3» эквивалентно:", opts:["column < 1 AND column > 3","column < 1 OR column > 3","column = 1 OR column = 3","column IN (1,2,3)"], a:1, ex:"NOT BETWEEN значит вне диапазона — либо меньше нижней границы, либо больше верхней."},
+  {q:"SQL-команда создания индекса на столбце column1 таблицы table1:", opts:["ALTER INDEX idx ON table1(column1);", "CREATE INDEX idx ON table1(column1);","CREATE OR REPLACE INDEX idx FOR table1(column1);","INDEX CREATE idx table1(column1);"], a:1, ex:"Синтаксис: CREATE INDEX имя ON таблица(столбец)."},
+  {q:"Транзакция базы данных состоит из:", opts:["ровно одного SELECT-запроса","операторов DML, составляющих одно логически цельное изменение данных","только операторов DDL","двух независимых запросов"], a:1, ex:"Транзакция — единица работы, которая должна выполниться целиком (принцип атомарности, ACID)."},
+  {q:"Автоматическая фиксация (auto-commit) данных происходит, если:", opts:["выполняется одно самостоятельное DML-выражение вне явной транзакции","выполняются несколько последовательных DML-выражений","выполняется DDL-выражение внутри транзакции","никогда автоматически не происходит"], a:0, ex:"По умолчанию СУБД фиксирует каждую отдельную DML-команду сразу же."},
+  {q:"Уровень изоляции READ COMMITTED в первую очередь предотвращает:", opts:["фантомное чтение","неповторяющееся чтение","грязное чтение (dirty read)","потерянное обновление"], a:2, ex:"READ COMMITTED гарантирует, что читаются только зафиксированные данные — грязное чтение исключено."},
+  {q:"Соединение (JOIN) многих таблиц в запросе делает чтение чрезмерно медленным. Решение:", opts:["привести данные в 4NF","удалить внешние ключи","денормализация или материализованное представление","убрать все индексы"], a:2, ex:"Денормализация или materialized view уменьшают количество JOIN-ов ценой избыточности данных."},
+  {q:"Программа — это:", opts:["устройство для хранения данных","алгоритм, записанный на понятном компьютеру языке","блок-схема без деталей реализации","указание, данное пользователю на естественном языке"], a:1, ex:"Программа — это реализация алгоритма на языке, который может выполнить компьютер."},
+  {q:"Какой вид алгоритма используется для вычисления значения многочлена (например, по схеме Горнера)?", opts:["линейный","разветвляющийся","циклический","рекурсивный без базового случая"], a:2, ex:"Вычисление многочлена сводится к повторяющемуся умножению и сложению в цикле — циклический алгоритм."},
+  {q:"Какие проблемы возникают при параллельном выполнении транзакций без должной изоляции?", opts:["только синтаксические ошибки SQL","потерянное обновление и неповторяющееся/фантомное чтение","только проблемы с индексами","увеличение размера файла базы данных"], a:1, ex:"Классические проблемы конкурентного доступа: lost update, non-repeatable read и phantom read."},
+  {q:"В таблице products 3 строки с ценами 15000, 30000 и 2000. Запрос: SELECT price FROM products WHERE price > ALL (SELECT 1000 UNION SELECT 10000 UNION SELECT 12000). Результат:", opts:["15000, 30000","2000","15000, 30000, 2000","10000, 15000"], a:0, ex:"> ALL значит больше МАКСИМУМА подзапроса (12000). Подходят только 15000 и 30000."},
+  {q:"В таблице products 3 строки с ценами 15000, 20000 и 2000. Запрос: SELECT price FROM products WHERE price > ANY (SELECT 1000 UNION SELECT 30000 UNION SELECT 12000). Результат:", opts:["15000, 20000","только 20000","15000, 20000, 2000","ни одной строки"], a:2, ex:"> ANY значит больше хотя бы ОДНОГО значения из подзапроса, то есть больше МИНИМУМА (1000). Этому условию отвечают все три цены, включая 2000."},
+  {q:"К какой категории SQL относится команда SELECT?", opts:["DML","DQL","DDL","TCL"], a:1, ex:"Частая ловушка: SELECT только читает данные и ничего не меняет, поэтому это DQL (Data Query Language), а не DML."},
+  {q:"Какие команды относятся к DML (Data Manipulation Language)?", opts:["CREATE, ALTER, DROP","INSERT, UPDATE, DELETE","GRANT, REVOKE","COMMIT, ROLLBACK"], a:1, ex:"DML меняет данные, но не структуру таблицы: INSERT, UPDATE, DELETE, MERGE."},
+  {q:"К какой категории относятся COMMIT и ROLLBACK?", opts:["DDL","DML","TCL","DCL"], a:2, ex:"TCL (Transaction Control Language) управляет транзакциями: COMMIT, ROLLBACK, SAVEPOINT."},
+  {q:"К какой категории относятся GRANT и REVOKE?", opts:["DCL","DML","DQL","DDL"], a:0, ex:"DCL (Data Control Language) управляет правами доступа."},
+  {q:"JOIN, который возвращает ВСЕ строки левой таблицы плюс совпадения справа:", opts:["INNER JOIN","RIGHT JOIN","LEFT JOIN","FULL JOIN"], a:2, ex:"LEFT JOIN сохраняет все строки левой таблицы, даже если для них нет совпадений справа (тогда справа будут NULL)."},
+  {q:"Чем HAVING отличается от WHERE?", opts:["HAVING применяется до группировки, WHERE — после","HAVING применяется после GROUP BY, WHERE — до группировки","это полные синонимы","HAVING работает только с INSERT"], a:1, ex:"WHERE фильтрует строки до группировки, HAVING — агрегированные группы после GROUP BY."},
+  {q:"Наивное (несбалансированное) бинарное дерево в худшем случае вырождается в:", opts:["сбалансированное дерево","цепочку (список) с высотой O(n)","кучу","лес"], a:1, ex:"Без балансировки дерево может стать похожим на связный список — тогда поиск деградирует до O(n)."},
+  {q:"«Лес» в теории графов/деревьев — это:", opts:["одно очень большое дерево","дерево с циклами","множество независимых деревьев","дерево без листьев"], a:2, ex:"Лес — это набор из нескольких непересекающихся деревьев, а не одно дерево."},
+  {q:"Задача о ранце (0/1 knapsack) эффективно решается методом:", opts:["жадным алгоритмом","динамического программирования","бинарным поиском","BFS"], a:1, ex:"Жадный выбор не даёт оптимума для 0/1-рюкзака — нужна табличная схема динамического программирования."},
+  {q:"Цикл выполняется O(n) раз, и внутри него — ещё один цикл на O(n) итераций. Итоговая сложность:", opts:["O(n)","O(n log n)","O(n²)","O(2n)"], a:2, ex:"Вложенные циклы перемножаются: O(n) × O(n) = O(n²)."},
+  {q:"Сначала выполняется цикл за O(n), а ПОСЛЕ него — отдельный независимый цикл тоже за O(n). Итоговая сложность:", opts:["O(n²)","O(2n) = O(n)","O(n log n)","O(log n)"], a:1, ex:"Последовательные (не вложенные) шаги складываются: O(n)+O(n)=O(2n), что по правилам Big O upрощается до O(n)."},
+  {q:"Мощность отношения (relation cardinality) в реляционной модели — это:", opts:["число столбцов","число внешних ключей","число строк (кортежей)","число индексов"], a:2, ex:"Не путать со степенью отношения (число столбцов) — мощность считает именно строки."},
+  {q:"Какая из этих SUBD НЕ является NoSQL/геораспределённой?", opts:["Cassandra","MongoDB","MariaDB","Amazon DynamoDB"], a:2, ex:"MariaDB — классическая реляционная СУБД (форк MySQL), остальные — NoSQL/распределённые системы."},
+  {q:"Бинарный поиск работает только если массив:", opts:["пустой","отсортированный","двумерный","строковый"], a:1, ex:"Алгоритм делит область поиска пополам, сравнивая с серединой — это имеет смысл только для отсортированных данных."},
+  {q:"Двусвязный список отличается от односвязного тем, что:", opts:["хранит только next","хранит указатели и на next, и на prev","не имеет узлов","является деревом"], a:1, ex:"Каждый узел двусвязного списка хранит ссылки на следующий И предыдущий элемент."},
+  {q:"К DDL (Data Definition Language) относятся команды:", opts:["SELECT, INSERT","CREATE, ALTER, DROP","COMMIT, ROLLBACK","GRANT, REVOKE"], a:1, ex:"DDL определяет структуру БД: создание, изменение и удаление объектов."},
+  {q:"Primary Key — это:", opts:["внешний ключ, ссылающийся на другую таблицу","уникальный ключ, не допускающий значений NULL","обычный столбец без ограничений","индекс без уникальности"], a:1, ex:"Первичный ключ обязан быть уникальным для каждой строки и не может быть NULL."},
+  {q:"Foreign Key используется для:", opts:["сортировки результатов","связи текущей таблицы с другой через Primary Key","удаления таблицы","группировки строк"], a:1, ex:"Внешний ключ ссылается на первичный ключ другой таблицы, реализуя связь между таблицами."},
+  {q:"Селекция (selection) в реляционной алгебре — это:", opts:["выбор строк по условию","выбор столбцов","создание новой таблицы","соединение двух таблиц"], a:0, ex:"Селекция отбирает строки, удовлетворяющие условию (аналог WHERE); проекция — отбирает столбцы."},
+  {q:"CROSS JOIN двух таблиц из 3 и 5 строк вернёт:", opts:["3 строки","5 строк","8 строк","15 строк"], a:3, ex:"CROSS JOIN — декартово произведение: каждая строка первой таблицы сочетается с каждой строкой второй (3×5=15)."},
+  {q:"Условие `WHERE column = NULL` для поиска пустых значений:", opts:["сработает корректно","никогда не сработает — нужно IS NULL","сработает только в Oracle","равносильно column IS NOT NULL"], a:1, ex:"NULL — это отсутствие значения, сравнение через = с NULL всегда даёт неопределённость (не true). Нужно использовать IS NULL."},
+  {q:"COUNT(column) может вернуть МЕНЬШЕ строк, чем COUNT(*), потому что:", opts:["COUNT(column) считает только уникальные значения","COUNT(column) не учитывает строки, где значение column = NULL","COUNT(*) быстрее работает","это никогда не происходит, они всегда равны"], a:1, ex:"COUNT(*) считает вообще все строки, а COUNT(column) пропускает NULL-значения в этом столбце."},
+  {q:"Составной ключ (Composite Key) — это:", opts:["ключ, состоящий из нескольких столбцов вместе","любой уникальный столбец","внешний ключ","индекс без уникальности"], a:0, ex:"Например, StudentID + CourseID вместе образуют составной первичный ключ."},
+  {q:"Super Key отличается от Candidate Key тем, что:", opts:["Super Key всегда меньше Candidate Key","Super Key может содержать лишние (избыточные) атрибуты сверх минимально необходимых","они полностью одинаковы","Super Key не может быть уникальным"], a:1, ex:"Candidate Key — минимальный набор атрибутов, обеспечивающий уникальность; Super Key может включать дополнительные, не обязательные для уникальности столбцы."},
+  {q:"1НФ (первая нормальная форма) требует, чтобы:", opts:["не было транзитивных зависимостей","все значения были атомарными (неделимыми)","не было частичных зависимостей","таблица не содержала внешних ключей"], a:1, ex:"1НФ запрещает составные/многозначные значения в одной ячейке — только атомарные значения."},
+  {q:"Отличие DELETE от TRUNCATE:", opts:["TRUNCATE удаляет отдельные строки по условию, DELETE — все сразу","DELETE можно откатить (ROLLBACK) и использовать с WHERE, TRUNCATE удаляет все строки сразу и обычно необратим","они полностью идентичны","TRUNCATE удаляет структуру таблицы, а DELETE — нет"], a:1, ex:"DELETE работает построчно с возможностью условия и отката; TRUNCATE быстро очищает всю таблицу целиком."},
+  {q:"Кластерный индекс отличается от некластерного тем, что:", opts:["кластерных индексов может быть много на одну таблицу","кластерный индекс определяет физический порядок хранения строк на диске","некластерный индекс определяет физический порядок хранения","кластерный индекс всегда медленнее"], a:1, ex:"Кластерный индекс — один на таблицу и задаёт физический порядок строк; некластерных может быть несколько, это отдельные структуры-указатели."},
+];
+
+let quiz2Order = [];
+let quiz2Idx = 0;
+let quiz2Score = 0;
+let answered2 = false;
+
+function buildQuiz2Order(){
+  quiz2Order = quiz2Data.map((_,i)=>i);
+  for(let i=quiz2Order.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [quiz2Order[i],quiz2Order[j]]=[quiz2Order[j],quiz2Order[i]];
+  }
+}
+
+function renderQuiz2(){
+  answered2 = false;
+  document.getElementById('quiz2Active').style.display = 'block';
+  document.getElementById('quiz2Done').style.display = 'none';
+  const qi = quiz2Order[quiz2Idx];
+  const item = quiz2Data[qi];
+  document.getElementById('quiz2Index').textContent = 'Вопрос '+(quiz2Idx+1)+' / '+quiz2Data.length;
+  document.getElementById('quiz2Score').textContent = 'Верно: '+quiz2Score;
+  document.getElementById('quiz2BarFill').style.width = (((quiz2Idx)/quiz2Data.length)*100)+'%';
+  document.getElementById('q2Text').textContent = item.q;
+  document.getElementById('q2Explain').style.display = 'none';
+  document.getElementById('q2Explain').textContent = '';
+  document.getElementById('quiz2Next').disabled = true;
+
+  const optOrder = item.opts.map((_,i)=>i);
+  for(let i=optOrder.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [optOrder[i],optOrder[j]]=[optOrder[j],optOrder[i]];
+  }
+  const box = document.getElementById('q2Options');
+  box.innerHTML = '';
+  optOrder.forEach(origIdx=>{
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.textContent = item.opts[origIdx];
+    b.addEventListener('click', ()=>{
+      if(answered2) return;
+      answered2 = true;
+      const isCorrect = origIdx === item.a;
+      if(isCorrect){ b.classList.add('correct'); quiz2Score++; }
+      else{
+        b.classList.add('wrong');
+        [...box.children].forEach(c=>{ if(c.textContent===item.opts[item.a]) c.classList.add('correct'); });
+      }
+      [...box.children].forEach(c=>c.disabled = true);
+      document.getElementById('q2Explain').style.display = 'block';
+      document.getElementById('q2Explain').textContent = item.ex;
+      document.getElementById('quiz2Score').textContent = 'Верно: '+quiz2Score;
+      document.getElementById('quiz2Next').disabled = false;
+    });
+    box.appendChild(b);
+  });
+}
+
+async function finishQuiz2(){
+  document.getElementById('quiz2Active').style.display = 'none';
+  document.getElementById('quiz2Done').style.display = 'block';
+  document.getElementById('finalScore2').textContent = quiz2Score+'/'+quiz2Data.length;
+  const best = await storageGet('quiz2-best');
+  let bestScore = best && best.score !== undefined ? best.score : -1;
+  if(quiz2Score > bestScore){
+    bestScore = quiz2Score;
+    await storageSet('quiz2-best', {score:bestScore});
+  }
+  document.getElementById('bestScore2').textContent = 'Лучший результат: '+bestScore+'/'+quiz2Data.length;
+}
+
+document.getElementById('quiz2Next').addEventListener('click', ()=>{
+  quiz2Idx++;
+  if(quiz2Idx >= quiz2Data.length){
+    document.getElementById('quiz2BarFill').style.width = '100%';
+    finishQuiz2();
+  } else {
+    renderQuiz2();
+  }
+});
+document.getElementById('quiz2Restart').addEventListener('click', ()=>{
+  quiz2Idx = 0; quiz2Score = 0;
+  buildQuiz2Order();
+  renderQuiz2();
+});
+
+buildQuiz2Order();
+renderQuiz2();
+
+/* ---------------- QUIZ 3: официальные образцы — Алгоритмы (testcenter.kz) ---------------- */
+const quiz3Data = [
+  {q:"Нужно найти среднее введённых оценок, причём их общее количество заранее НЕ определено. Какая структура цикла нужна?", opts:["Неполное ветвление","Параметрический цикл (for)","Полное ветвление","Условный цикл (while)"], a:3, ex:"Раз число повторений заранее неизвестно, нужен цикл с условием (while), а не цикл с параметром, где счётчик известен заранее."},
+  {q:"Какой алгоритм находит кратчайший путь в графе с рёбрами ОТРИЦАТЕЛЬНОГО веса?", opts:["Флойд-Уоршелл","Дейкстра","Прим","Беллман-Форд"], a:3, ex:"Дейкстра не работает с отрицательными весами — для этого предназначен именно алгоритм Беллмана-Форда."},
+  {q:"Какие алгоритмы строят остовное (каркасное) дерево графа?", opts:["Дейкстра и Флойд","Прим и Крускал","Гамильтон и Эйлер","Беллман и Уоршелл"], a:1, ex:"MST (минимальное остовное дерево) строят именно алгоритмы Прима и Крускала."},
+  {q:"Какая циклическая конструкция в C++ используется для обхода двумерного массива?", opts:["локальная переменная","функция","вложенный цикл","процедура"], a:2, ex:"Для строк и столбцов двумерного массива нужны два вложенных друг в друга цикла."},
+  {q:"Абстрактный тип данных «очередь» можно организовать с помощью:", opts:["многомерных массивов","однонаправленного связного списка","бинарного дерева","двумерных массивов"], a:1, ex:"Очередь естественно реализуется односвязным списком с указателями на голову и хвост."},
+  {q:"Алгоритм проходит по входным данным, а затем в отдельном цикле выполняет O(log n) операций на элемент. Итоговая сложность:", opts:["O(2ⁿ)","O(1)","O(n²)","O(n log n)"], a:3, ex:"Обход всех n элементов, каждый из которых обрабатывается за O(log n), даёт композицию O(n) × O(log n) = O(n log n)."},
+  {q:"Набор элементов данных РАЗНОГО типа в C++ называется:", opts:["массив","стек","структура (struct)","граф"], a:2, ex:"Массив хранит элементы одного типа, а структура объединяет поля разных типов."},
+  {q:"Сложность операции DELETE(T[0..m-1], key) в хеш-таблице методом цепочек в среднем случае:", opts:["Θ(m+n)","O(n)","O(1)","O(1 + n/m)"], a:3, ex:"В среднем нужно пройти цепочку длиной ~n/m (коэффициент заполнения), плюс константа на доступ к самой ячейке."},
+  {q:"В чём преимущество двусвязного списка по сравнению с односвязным?", opts:["позволяет использовать сбалансированные деревья","можно двигаться и обрабатывать список в обе стороны, в том числе восстанавливаясь при потере одной ссылки","требует словарь для замены последовательностей","доступен только с циклическим списком"], a:1, ex:"У каждого узла есть указатель и на следующий, и на предыдущий элемент — это даёт гибкость обхода в обе стороны."},
+];
+
+let quiz3Order = [];
+let quiz3Idx = 0;
+let quiz3Score = 0;
+let answered3 = false;
+
+function buildQuiz3Order(){
+  quiz3Order = quiz3Data.map((_,i)=>i);
+  for(let i=quiz3Order.length-1;i>0;i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [quiz3Order[i],quiz3Order[j]]=[quiz3Order[j],quiz3Order[i]];
+  }
+}
+function renderQuiz3(){
+  answered3 = false;
+  document.getElementById('quiz3Active').style.display = 'block';
+  document.getElementById('quiz3Done').style.display = 'none';
+  const item = quiz3Data[quiz3Order[quiz3Idx]];
+  document.getElementById('quiz3Index').textContent = 'Вопрос '+(quiz3Idx+1)+' / '+quiz3Data.length;
+  document.getElementById('quiz3Score').textContent = 'Верно: '+quiz3Score;
+  document.getElementById('quiz3BarFill').style.width = (((quiz3Idx)/quiz3Data.length)*100)+'%';
+  document.getElementById('q3Text').textContent = item.q;
+  document.getElementById('q3Explain').style.display = 'none';
+  document.getElementById('quiz3Next').disabled = true;
+  const optOrder = item.opts.map((_,i)=>i);
+  for(let i=optOrder.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [optOrder[i],optOrder[j]]=[optOrder[j],optOrder[i]]; }
+  const box = document.getElementById('q3Options');
+  box.innerHTML = '';
+  optOrder.forEach(origIdx=>{
+    const b = document.createElement('button');
+    b.className = 'opt';
+    b.textContent = item.opts[origIdx];
+    b.addEventListener('click', ()=>{
+      if(answered3) return;
+      answered3 = true;
+      const isCorrect = origIdx === item.a;
+      if(isCorrect){ b.classList.add('correct'); quiz3Score++; }
+      else{ b.classList.add('wrong'); [...box.children].forEach(c=>{ if(c.textContent===item.opts[item.a]) c.classList.add('correct'); }); }
+      [...box.children].forEach(c=>c.disabled = true);
+      document.getElementById('q3Explain').style.display = 'block';
+      document.getElementById('q3Explain').textContent = item.ex;
+      document.getElementById('quiz3Score').textContent = 'Верно: '+quiz3Score;
+      document.getElementById('quiz3Next').disabled = false;
+    });
+    box.appendChild(b);
+  });
+}
+async function finishQuiz3(){
+  document.getElementById('quiz3Active').style.display = 'none';
+  document.getElementById('quiz3Done').style.display = 'block';
+  document.getElementById('finalScore3').textContent = quiz3Score+'/'+quiz3Data.length;
+  const best = await storageGet('quiz3-best');
+  let bestScore = best && best.score !== undefined ? best.score : -1;
+  if(quiz3Score > bestScore){ bestScore = quiz3Score; await storageSet('quiz3-best', {score:bestScore}); }
+  document.getElementById('bestScore3').textContent = 'Лучший результат: '+bestScore+'/'+quiz3Data.length;
+}
+document.getElementById('quiz3Next').addEventListener('click', ()=>{
+  quiz3Idx++;
+  if(quiz3Idx >= quiz3Data.length){ document.getElementById('quiz3BarFill').style.width='100%'; finishQuiz3(); }
+  else renderQuiz3();
+});
+document.getElementById('quiz3Restart').addEventListener('click', ()=>{
+  quiz3Idx=0; quiz3Score=0; buildQuiz3Order(); renderQuiz3();
+});
+buildQuiz3Order();
+renderQuiz3();
+
+/* ---------------- QUIZ 4: официальные образцы — Базы данных (мультивыбор) ---------------- */
+const quiz4Data = [
+  {q:"Функции ядра СУБД включают:", opts:["управление данными во внешней памяти","глобальная проверка целостности БД","загрузка и выгрузка БД","управление буферами оперативной памяти","сбор статистики","локальная проверка целостности БД","компиляция операторов языка БД в исполняемую программу","управление транзакциями и журналирование"], correct:[0,3,6,7], ex:"Классические функции ядра СУБД: управление внешней памятью, буферами ОЗУ, транзакциями и журналом, а также компиляция операторов языка БД. Остальное — задачи других компонентов (оптимизатора, утилит администрирования)."},
+  {q:"Свойства (типы) атрибута отдельного объекта в ER-модели:", opts:["однозначный (single-valued) атрибут","многозначный атрибут","простой атрибут","неопределённый атрибут","одинаковозначный атрибут","многополярный атрибут"], correct:[0,1,2], ex:"В ER-модели атрибуты бывают простыми/составными и однозначными/многозначными. Остальные варианты — не существующие в теории термины."},
+  {q:"Свойства транзакции базы данных (из классических ACID):", opts:["целостность/согласованность","гибкость","открытость","атомарность","разделение","сериализуемость","безопасность"], correct:[0,3,5], ex:"ACID: атомарность, согласованность (целостность), изолированность (обеспечивается через сериализуемость выполнения), устойчивость. «Гибкость», «открытость», «безопасность» — не входят в классические свойства транзакций."},
+  {q:"Реляционная модель накладывает на внешние ключи ограничение ... для обеспечения целостности данных:", opts:["доменное","верхнее","семантическое","внутреннее","ссылочное (referential)","внешнее"], correct:[4], ex:"Ограничение внешнего ключа называется ссылочной целостностью (referential integrity)."},
+  {q:"Основные компоненты, выделяемые в ER-модели:", opts:["значения, связи, атрибуты","объекты, связи, атрибуты","значения, связи, древовидные структуры","ключ-значение, объекты, документы"], correct:[1], ex:"ER-модель строится вокруг объектов (сущностей), связей между ними и атрибутов."},
+  {q:"Какой запрос выбирает все товары, на которые НЕТ заказов?", opts:[
+    "SELECT * FROM products WHERE productId IN (SELECT DISTINCT productId FROM orders);",
+    "SELECT * FROM products WHERE product_id NOT IN (SELECT DISTINCT product_id FROM orders);",
+    "SELECT * FROM product WHERE product_id NOT IN (SELECT DISTINCT product_id FROM order);",
+    "SELECT * FROM products WHERE product_id IN (SELECT product_id FROM orders GROUP BY product_id);"
+  ], correct:[1], ex:"Нужен NOT IN с подзапросом по существующим таблицам products/orders и согласованным именем столбца product_id."},
+  {q:"Степень отношения (relation degree) в реляционной модели — это:", opts:["число полей","внешний ключ","первичный ключ","число столбцов","домен"], correct:[0,3], ex:"Степень отношения = количество атрибутов, то есть число полей = число столбцов (не путать с кардинальностью — числом строк)."},
+  {q:"Какие СУБД являются геораспределёнными / нереляционными (NoSQL)?", opts:["Google Spanner","Microsoft SQL Server","PostgreSQL","Oracle","Cassandra","MySQL","Amazon DynamoDB"], correct:[0,4,6], ex:"Spanner, Cassandra и DynamoDB — геораспределённые/NoSQL системы; остальные — классические реляционные СУБД одного узла."},
+  {q:"Операция реляционной алгебры, которая выбирает указанные столбцы (атрибуты) отношения:", opts:["соединение","деление","проекция","композиция","ограничение (селекция)"], correct:[2], ex:"Проекция (projection) отбирает столбцы; селекция отбирает строки по условию; соединение объединяет отношения."},
+];
+
+let quiz4Order = [];
+let quiz4Idx = 0;
+let quiz4Score = 0;
+let checked4 = false;
+
+function buildQuiz4Order(){
+  quiz4Order = quiz4Data.map((_,i)=>i);
+  for(let i=quiz4Order.length-1;i>0;i--){ const j=Math.floor(Math.random()*(i+1)); [quiz4Order[i],quiz4Order[j]]=[quiz4Order[j],quiz4Order[i]]; }
+}
+function renderQuiz4(){
+  checked4 = false;
+  document.getElementById('quiz4Active').style.display = 'block';
+  document.getElementById('quiz4Done').style.display = 'none';
+  const item = quiz4Data[quiz4Order[quiz4Idx]];
+  document.getElementById('quiz4Index').textContent = 'Вопрос '+(quiz4Idx+1)+' / '+quiz4Data.length;
+  document.getElementById('quiz4Score').textContent = 'Верно: '+quiz4Score;
+  document.getElementById('quiz4BarFill').style.width = (((quiz4Idx)/quiz4Data.length)*100)+'%';
+  document.getElementById('q4Text').textContent = item.q + (item.correct.length>1 ? '  (может быть несколько верных)' : '');
+  document.getElementById('q4Explain').style.display = 'none';
+  document.getElementById('quiz4Next').disabled = true;
+  document.getElementById('quiz4Check').disabled = false;
+  const box = document.getElementById('q4Options');
+  box.innerHTML = '';
+  item.opts.forEach((text, idx)=>{
+    const label = document.createElement('label');
+    label.className = 'opt-check';
+    label.innerHTML = '<input type="checkbox" value="'+idx+'"> <span>'+text+'</span>';
+    box.appendChild(label);
+  });
+}
+function gradeQuiz4(){
+  if(checked4) return;
+  checked4 = true;
+  const item = quiz4Data[quiz4Order[quiz4Idx]];
+  const box = document.getElementById('q4Options');
+  const boxes = [...box.querySelectorAll('input[type=checkbox]')];
+  const selected = boxes.filter(cb=>cb.checked).map(cb=>parseInt(cb.value));
+  const correctSet = new Set(item.correct);
+  const selSet = new Set(selected);
+  let fullyCorrect = correctSet.size === selSet.size && [...correctSet].every(v=>selSet.has(v));
+  boxes.forEach(cb=>{
+    const idx = parseInt(cb.value);
+    const label = cb.closest('.opt-check');
+    cb.disabled = true;
+    if(correctSet.has(idx) && selSet.has(idx)) label.classList.add('correct');
+    else if(!correctSet.has(idx) && selSet.has(idx)) label.classList.add('wrong');
+    else if(correctSet.has(idx) && !selSet.has(idx)) label.classList.add('missed');
+  });
+  if(fullyCorrect) quiz4Score++;
+  document.getElementById('quiz4Score').textContent = 'Верно: '+quiz4Score;
+  document.getElementById('quiz4Explain').style.display = 'block';
+  document.getElementById('quiz4Explain').textContent = item.ex;
+  document.getElementById('quiz4Check').disabled = true;
+  document.getElementById('quiz4Next').disabled = false;
+}
+async function finishQuiz4(){
+  document.getElementById('quiz4Active').style.display = 'none';
+  document.getElementById('quiz4Done').style.display = 'block';
+  document.getElementById('finalScore4').textContent = quiz4Score+'/'+quiz4Data.length;
+  const best = await storageGet('quiz4-best');
+  let bestScore = best && best.score !== undefined ? best.score : -1;
+  if(quiz4Score > bestScore){ bestScore = quiz4Score; await storageSet('quiz4-best', {score:bestScore}); }
+  document.getElementById('bestScore4').textContent = 'Лучший результат: '+bestScore+'/'+quiz4Data.length;
+}
+document.getElementById('quiz4Check').addEventListener('click', gradeQuiz4);
+document.getElementById('quiz4Next').addEventListener('click', ()=>{
+  quiz4Idx++;
+  if(quiz4Idx >= quiz4Data.length){ document.getElementById('quiz4BarFill').style.width='100%'; finishQuiz4(); }
+  else renderQuiz4();
+});
+document.getElementById('quiz4Restart').addEventListener('click', ()=>{
+  quiz4Idx=0; quiz4Score=0; buildQuiz4Order(); renderQuiz4();
+});
+buildQuiz4Order();
+renderQuiz4();
+</script>
+</body>
+</html>
