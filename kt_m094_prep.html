@@ -717,8 +717,7 @@ document.querySelectorAll('nav.tabs button').forEach(btn=>{
     document.querySelectorAll('section.panel').forEach(p=>p.classList.remove('active'));
     btn.classList.add('active');
     document.getElementById(btn.dataset.tab).classList.add('active');
-    const isTestTab = ['quiz', 'extra', 'official'].includes(btn.dataset.tab);
-    document.body.classList.toggle('quiz-focus', isTestTab);
+    document.body.classList.toggle('quiz-focus', btn.dataset.tab === 'quiz');
   });
 });
 
