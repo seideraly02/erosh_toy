@@ -320,22 +320,22 @@
     const questions = [
       {
         kicker: "1/4",
-        text: "Бір күні екеуміз әдемі бір кеш өткізуге қалай қарайсың?",
+        text: "Бүгін кешке серуендеп қайтуға қалай қарайсың?",
         isFinal: false
       },
       {
         kicker: "2/4",
-        text: "Кофе, әңгіме және жақсы көңіл-күй болса — келісесің бе?",
+        text: "Сабақтан нешеде шығасың?",
         isFinal: false
       },
       {
         kicker: "3/4",
-        text: "Егер мен орынды өзім таңдап, бәрін әдемі ұйымдастырсам ше?",
+        text: "Сені алып кетемін.",
         isFinal: false
       },
       {
         kicker: "4/4",
-        text: "Онда сені кездесуге шақырсам, «Иә» дейсің бе? 💖",
+        text: "Ертең БАО-ға бірге көтерілеміз бе? 💖",
         isFinal: true
       }
     ];
@@ -365,7 +365,7 @@
 
       app.innerHTML = `
         <div class="top">
-          <div class="progress" aria-label="Прогресс">
+          <div class="progress" aria-label="Орындалу барысы">
             ${progressDots()}
           </div>
           <div class="kicker">${q.kicker}</div>
