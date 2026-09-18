@@ -1,0 +1,9 @@
+# macOS Finder metadata
+.DS_Store
+
+# Local Netlify state
+.netlify/
+
+# Editor and temporary files
+.vscode/
+*.log
