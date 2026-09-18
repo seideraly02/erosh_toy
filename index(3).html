@@ -1,0 +1,513 @@
+<!doctype html>
+<html lang="kk">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="theme-color" content="#241426" />
+  <title>Кездесуге шақыру 💌</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-1: #160d18;
+      --bg-2: #2a132d;
+      --card: rgba(54, 29, 56, .82);
+      --card-border: rgba(255, 255, 255, .10);
+      --text: #fff8fb;
+      --muted: #d8c6d8;
+      --pink: #ff7fa8;
+      --pink-2: #ff9fc0;
+      --gold: #f2c66d;
+      --yes-text: #35152a;
+      --shadow: 0 24px 70px rgba(0,0,0,.38);
+    }
+
+    [data-theme="light"] {
+      --bg-1: #fff5f8;
+      --bg-2: #f9e4ee;
+      --card: rgba(255,255,255,.86);
+      --card-border: rgba(94, 52, 76, .10);
+      --text: #392435;
+      --muted: #755f70;
+      --pink: #e95b8c;
+      --pink-2: #f27ba3;
+      --gold: #b98a32;
+      --yes-text: #fff;
+      --shadow: 0 24px 70px rgba(95, 54, 75, .14);
+    }
+
+    @media (prefers-color-scheme: light) {
+      :root:not([data-theme="dark"]) {
+        --bg-1: #fff5f8;
+        --bg-2: #f9e4ee;
+        --card: rgba(255,255,255,.86);
+        --card-border: rgba(94, 52, 76, .10);
+        --text: #392435;
+        --muted: #755f70;
+        --pink: #e95b8c;
+        --pink-2: #f27ba3;
+        --gold: #b98a32;
+        --yes-text: #fff;
+        --shadow: 0 24px 70px rgba(95, 54, 75, .14);
+      }
+    }
+
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+    }
+
+    body {
+      min-height: 100vh;
+      font-family: "Manrope", system-ui, sans-serif;
+      color: var(--text);
+      background:
+        radial-gradient(circle at 15% 10%, rgba(255, 127, 168, .12), transparent 28%),
+        radial-gradient(circle at 85% 20%, rgba(242, 198, 109, .09), transparent 25%),
+        linear-gradient(145deg, var(--bg-1), var(--bg-2));
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      overflow-x: hidden;
+    }
+
+    .shell {
+      width: min(100%, 720px);
+      position: relative;
+    }
+
+    .card {
+      position: relative;
+      overflow: hidden;
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 30px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+    }
+
+    .card::before {
+      content: "";
+      position: absolute;
+      inset: -120px auto auto -120px;
+      width: 260px;
+      height: 260px;
+      border-radius: 50%;
+      background: rgba(255, 127, 168, .08);
+      filter: blur(10px);
+      pointer-events: none;
+    }
+
+    .top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 18px;
+      margin-bottom: 26px;
+    }
+
+    .progress {
+      display: flex;
+      gap: 9px;
+      align-items: center;
+    }
+
+    .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.16);
+      transition: .25s ease;
+    }
+
+    .dot.active {
+      width: 30px;
+      background: linear-gradient(90deg, var(--pink), var(--gold));
+    }
+
+    .kicker {
+      font-size: 13px;
+      font-weight: 800;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+      color: var(--gold);
+      white-space: nowrap;
+    }
+
+    h1 {
+      font-family: "Fraunces", serif;
+      font-size: clamp(34px, 6vw, 58px);
+      line-height: 1.04;
+      margin: 0;
+      letter-spacing: -.03em;
+      text-wrap: balance;
+    }
+
+    .sub {
+      margin: 16px 0 0;
+      color: var(--muted);
+      font-size: 15px;
+      line-height: 1.7;
+      max-width: 540px;
+    }
+
+    .zone {
+      position: relative;
+      height: 205px;
+      margin-top: 30px;
+      border: 1px dashed rgba(255,255,255,.10);
+      border-radius: 24px;
+      background: rgba(255,255,255,.025);
+      overflow: hidden;
+      touch-action: manipulation;
+    }
+
+    .btn {
+      appearance: none;
+      border: 0;
+      border-radius: 999px;
+      padding: 15px 24px;
+      min-width: 122px;
+      font: inherit;
+      font-weight: 800;
+      font-size: 15px;
+      cursor: pointer;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .btn-yes {
+      position: absolute;
+      left: 28px;
+      bottom: 28px;
+      background: linear-gradient(135deg, var(--pink), var(--pink-2));
+      color: var(--yes-text);
+      box-shadow: 0 14px 30px rgba(233, 91, 140, .28);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+
+    .btn-yes:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 18px 34px rgba(233, 91, 140, .34);
+    }
+
+    .btn-no {
+      position: absolute;
+      left: calc(100% - 150px);
+      top: 28px;
+      background: rgba(255,255,255,.08);
+      color: var(--text);
+      border: 1px solid rgba(255,255,255,.10);
+      transition: top .22s ease, left .22s ease, transform .16s ease;
+    }
+
+    .taunt {
+      min-height: 26px;
+      margin-top: 14px;
+      text-align: center;
+      color: var(--gold);
+      font-size: 14px;
+      font-weight: 700;
+      opacity: 0;
+      transform: translateY(5px);
+      transition: .25s ease;
+    }
+
+    .taunt.show {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .final {
+      text-align: center;
+      padding: 18px 0 8px;
+    }
+
+    .final-emoji {
+      font-size: 60px;
+      margin-bottom: 10px;
+      filter: drop-shadow(0 8px 18px rgba(255,127,168,.2));
+    }
+
+    .final h1 {
+      margin-bottom: 14px;
+    }
+
+    .final p {
+      margin: 0 auto 24px;
+      max-width: 520px;
+      line-height: 1.7;
+      color: var(--muted);
+    }
+
+    .restart {
+      display: inline-flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 6px;
+      background: linear-gradient(135deg, var(--pink), var(--pink-2));
+      color: var(--yes-text);
+    }
+
+    .confetti {
+      position: fixed;
+      top: -40px;
+      z-index: 999;
+      pointer-events: none;
+      animation: fall var(--dur) linear forwards;
+      font-size: var(--size);
+    }
+
+    @keyframes fall {
+      from {
+        transform: translate3d(0,-10vh,0) rotate(0deg);
+        opacity: 1;
+      }
+      to {
+        transform: translate3d(var(--drift),115vh,0) rotate(640deg);
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 560px) {
+      body { padding: 14px; }
+
+      .card {
+        border-radius: 24px;
+        padding: 22px;
+      }
+
+      .zone {
+        height: 220px;
+      }
+
+      .btn-yes {
+        left: 18px;
+        bottom: 20px;
+      }
+
+      .btn-no {
+        left: calc(100% - 138px);
+        top: 22px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation: none !important;
+        transition: none !important;
+        scroll-behavior: auto !important;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <main class="shell">
+    <section class="card" id="app" aria-live="polite"></section>
+  </main>
+
+  <script>
+    const questions = [
+      {
+        kicker: "1/4",
+        text: "Бір күні екеуміз әдемі бір кеш өткізуге қалай қарайсың?",
+        isFinal: false
+      },
+      {
+        kicker: "2/4",
+        text: "Кофе, әңгіме және жақсы көңіл-күй болса — келісесің бе?",
+        isFinal: false
+      },
+      {
+        kicker: "3/4",
+        text: "Егер мен орынды өзім таңдап, бәрін әдемі ұйымдастырсам ше?",
+        isFinal: false
+      },
+      {
+        kicker: "4/4",
+        text: "Онда сені кездесуге шақырсам, «Иә» дейсің бе? 💖",
+        isFinal: true
+      }
+    ];
+
+    const taunts = [
+      "Ой, бұл батырма тым жылдам екен 😄",
+      "«Жоқ» деген жауап бүгін қабылданбайды 😌",
+      "Тағы бір рет байқап көресің бе? 👀",
+      "Ұстай алмай қалдың ғой 😏",
+      "Жүрек «Иә» деп тұрған сияқты 💕"
+    ];
+
+    let idx = 0;
+    let tauntTimer = null;
+
+    const app = document.getElementById("app");
+
+    function progressDots() {
+      return questions.map((_, i) => {
+        const active = i <= idx ? "active" : "";
+        return `<span class="dot ${active}" aria-hidden="true"></span>`;
+      }).join("");
+    }
+
+    function renderQuestion() {
+      const q = questions[idx];
+
+      app.innerHTML = `
+        <div class="top">
+          <div class="progress" aria-label="Прогресс">
+            ${progressDots()}
+          </div>
+          <div class="kicker">${q.kicker}</div>
+        </div>
+
+        <h1>${q.text}</h1>
+        <p class="sub">Жауабыңды жақсылап ойлан… бірақ бір батырма сәл қырсық болуы мүмкін 😌</p>
+
+        <div class="zone" id="zone">
+          <button class="btn btn-yes" id="yesBtn" type="button">Иә 💖</button>
+          <button class="btn btn-no" id="noBtn" type="button">Жоқ</button>
+        </div>
+
+        <div class="taunt" id="taunt" aria-live="polite"></div>
+      `;
+
+      const zone = document.getElementById("zone");
+      const yesBtn = document.getElementById("yesBtn");
+      const noBtn = document.getElementById("noBtn");
+
+      yesBtn.addEventListener("click", () => {
+        if (q.isFinal) {
+          renderFinal();
+        } else {
+          idx++;
+          renderQuestion();
+        }
+      });
+
+      function showTaunt() {
+        const taunt = document.getElementById("taunt");
+        if (!taunt) return;
+
+        clearTimeout(tauntTimer);
+        taunt.textContent = taunts[Math.floor(Math.random() * taunts.length)];
+        taunt.classList.add("show");
+
+        tauntTimer = setTimeout(() => {
+          taunt.classList.remove("show");
+        }, 1400);
+      }
+
+      function dodge() {
+        const maxX = Math.max(0, zone.clientWidth - noBtn.offsetWidth);
+        const maxY = Math.max(0, zone.clientHeight - noBtn.offsetHeight);
+
+        const x = Math.floor(Math.random() * (maxX + 1));
+        const y = Math.floor(Math.random() * (maxY + 1));
+
+        noBtn.style.left = `${x}px`;
+        noBtn.style.top = `${y}px`;
+
+        showTaunt();
+      }
+
+      noBtn.addEventListener("touchstart", (e) => {
+        e.preventDefault();
+        dodge();
+      }, { passive: false });
+
+      noBtn.addEventListener("pointerenter", () => {
+        dodge();
+      });
+
+      noBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+        dodge();
+      });
+
+      zone.addEventListener("pointermove", (e) => {
+        const zoneRect = zone.getBoundingClientRect();
+        const btnRect = noBtn.getBoundingClientRect();
+
+        const pointerX = e.clientX - zoneRect.left;
+        const pointerY = e.clientY - zoneRect.top;
+
+        const btnCenterX = (btnRect.left - zoneRect.left) + btnRect.width / 2;
+        const btnCenterY = (btnRect.top - zoneRect.top) + btnRect.height / 2;
+
+        const distance = Math.hypot(pointerX - btnCenterX, pointerY - btnCenterY);
+
+        if (distance < 70) {
+          dodge();
+        }
+      });
+    }
+
+    function confettiBurst() {
+      if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+      const emojis = ["🎉", "💖", "✨", "🌸", "💌"];
+
+      for (let i = 0; i < 22; i++) {
+        const el = document.createElement("span");
+        el.className = "confetti";
+        el.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+
+        const left = Math.random() * 100;
+        const delay = Math.random() * 0.5;
+        const duration = 2.4 + Math.random() * 1.8;
+        const size = 20 + Math.random() * 18;
+        const drift = `${-80 + Math.random() * 160}px`;
+
+        el.style.left = `${left}vw`;
+        el.style.animationDelay = `${delay}s`;
+        el.style.setProperty("--dur", `${duration}s`);
+        el.style.setProperty("--size", `${size}px`);
+        el.style.setProperty("--drift", drift);
+
+        document.body.appendChild(el);
+
+        setTimeout(() => {
+          el.remove();
+        }, (delay + duration) * 1000 + 200);
+      }
+    }
+
+    function renderFinal() {
+      app.innerHTML = `
+        <div class="final">
+          <div class="final-emoji">💌</div>
+          <h1>Келістік! 🎉</h1>
+          <p>
+            Керемет! Енді ең қиыны артта қалды 😌
+            Кездесудің уақыты мен орнын бірге келісеміз.
+          </p>
+          <button class="btn restart" id="restartBtn" type="button">
+            Қайтадан бастау
+          </button>
+        </div>
+      `;
+
+      document.getElementById("restartBtn").addEventListener("click", () => {
+        idx = 0;
+        renderQuestion();
+      });
+
+      confettiBurst();
+    }
+
+    renderQuestion();
+  </script>
+</body>
+</html>
